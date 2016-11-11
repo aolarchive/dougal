@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "none",
+        "target": "es5",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "experimentalDecorators": true,
+        "baseUrl": "src",
+        "outFile": "dougal.js"
+    }
+}
