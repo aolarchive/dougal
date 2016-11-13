@@ -11,7 +11,7 @@
   "files": [
     "lib/extends.ts",
     "lib/validator.ts",
-    "lib/validations/ValidatorResolver.ts",
+    "lib/validations/validatorResolver.ts",
     "lib/validations/errorHandler.ts",
     "lib/validations/length.ts",
     "lib/validations/presence.ts",

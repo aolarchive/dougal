@@ -55,7 +55,7 @@ namespace Dougal {
       let validators = _.map(keys, (key) => {
         return new ValidatorResolver.namedValidators[key](options);
       });
-      let Anon = Validator.simple(() => {
+      let Anon = Validator.simple(function () {
         let args = arguments;
         _.each(validators, (validator) => {
           validator.validate.apply(validator, args);
