@@ -1,5 +1,4 @@
-namespace Dougal {
-
+namespace Dougal.Validations {
   interface ILengthOptions {
     minimum?: number,
     maximum?: number,
@@ -24,7 +23,4 @@ namespace Dougal {
       });
     }
   }
-
-  ValidatorResolver.namedValidators['length'] = LengthValidator;
-
 }

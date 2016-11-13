@@ -1,4 +1,4 @@
-namespace Dougal {
+namespace Dougal.Validations {
   export class ErrorHandler {
     messages: any = {};
 

@@ -1,11 +1,9 @@
-namespace Dougal {
+namespace Dougal.Validations {
   const ResolverErrors = {
     INVALID_FORMAT: 'unrecognized validation format'
   };
 
   export class ValidatorResolver {
-    static namedValidators: {[key: string]: Function} = {};
-
     attribute: string;
     validator: Validator;
 
@@ -47,14 +45,16 @@ namespace Dougal {
     }
 
     private resolveObject(options: any) {
-      let availableValidators = _.keys(ValidatorResolver.namedValidators);
-      let keys = _(options)
+      let validators = _(options)
         .keys()
-        .intersection(availableValidators)
+        .map((key) => {
+          return Dougal.Validations[_.capitalize(key) + 'Validator'];
+        })
+        .without(undefined)
+        .map((Validator) => {
+          return new Validator(options);
+        })
         .value();
-      let validators = _.map(keys, (key) => {
-        return new ValidatorResolver.namedValidators[key](options);
-      });
       let Anon = Validator.simple(function () {
         let args = arguments;
         _.each(validators, (validator) => {

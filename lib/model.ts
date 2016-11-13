@@ -1,5 +1,3 @@
-///<reference path="../node_modules/@types/lodash/index.d.ts" />
-
 namespace Dougal {
 
   interface Attribute {
@@ -12,10 +10,10 @@ namespace Dougal {
   export abstract class Model {
 
     attributes: any = {};
-    errors: ErrorHandler;
+    errors: Validations.ErrorHandler;
     getters: any = {};
     setters: any = {};
-    validators: ValidatorResolver[] = [];
+    validators: Validations.ValidatorResolver[] = [];
 
     protected attribute(name: string, options: Attribute = {}) {
       if (options.get) {
@@ -55,23 +53,21 @@ namespace Dougal {
 
     get valid() {
       if (!this.errors) {
-        this.errors = new ErrorHandler(this);
+        this.errors = new Validations.ErrorHandler(this);
         this.validate();
       }
       return this.errors.any();
     }
 
     public validate() {
-      this.errors = new ErrorHandler(this);
-      _.each(this.validators, (resolver: ValidatorResolver) => {
+      this.errors = new Validations.ErrorHandler(this);
+      _.each(this.validators, (resolver: Validations.ValidatorResolver) => {
         resolver.run(this);
       });
     }
 
     protected validates() {
-      this.validators.push(new ValidatorResolver(arguments));
+      this.validators.push(new Validations.ValidatorResolver(arguments));
     }
   }
 }
-
-window.Dougal = Dougal;

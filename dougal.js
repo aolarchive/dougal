@@ -1,3 +1,5 @@
+///<reference path="../node_modules/@types/lodash/index.d.ts" />
+window['Dougal'] = Dougal;
 function Extendable(BaseClass) {
     BaseClass.extends = function (constructor, prototype) {
         function Extended() {
@@ -49,158 +51,168 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    var ResolverErrors = {
-        INVALID_FORMAT: 'unrecognized validation format'
-    };
-    var ValidatorResolver = (function () {
-        function ValidatorResolver(args) {
-            switch (args.length) {
-                case 2:
-                    this.resolveAttributeValidator(args);
-                    break;
-                default:
+    var Validations;
+    (function (Validations) {
+        var ResolverErrors = {
+            INVALID_FORMAT: 'unrecognized validation format'
+        };
+        var ValidatorResolver = (function () {
+            function ValidatorResolver(args) {
+                switch (args.length) {
+                    case 2:
+                        this.resolveAttributeValidator(args);
+                        break;
+                    default:
+                        throw ResolverErrors.INVALID_FORMAT;
+                }
+            }
+            ValidatorResolver.prototype.resolveAttributeValidator = function (args) {
+                if (!_.isString(args[0])) {
                     throw ResolverErrors.INVALID_FORMAT;
-            }
-        }
-        ValidatorResolver.prototype.resolveAttributeValidator = function (args) {
-            if (!_.isString(args[0])) {
-                throw ResolverErrors.INVALID_FORMAT;
-            }
-            this.attribute = args[0];
-            this.resolveValidator(args[1]);
-        };
-        ValidatorResolver.prototype.resolveValidator = function (validator) {
-            if (validator instanceof Dougal.Validator) {
-                this.validator = validator;
-            }
-            else if (_.isString(validator)) {
-                this.resolveString(validator);
-            }
-            else if (_.isObject(validator)) {
-                this.resolveObject(validator);
-            }
-            else {
-                throw ResolverErrors.INVALID_FORMAT;
-            }
-        };
-        ValidatorResolver.prototype.resolveString = function (method) {
-            var Anon = Dougal.Validator.simple(function (record, attribute, value) {
-                _.get(record, method, _.noop).call(record, attribute, value);
-            });
-            this.validator = new Anon();
-        };
-        ValidatorResolver.prototype.resolveObject = function (options) {
-            var availableValidators = _.keys(ValidatorResolver.namedValidators);
-            var keys = _(options)
-                .keys()
-                .intersection(availableValidators)
-                .value();
-            var validators = _.map(keys, function (key) {
-                return new ValidatorResolver.namedValidators[key](options);
-            });
-            var Anon = Dougal.Validator.simple(function () {
-                var args = arguments;
-                _.each(validators, function (validator) {
-                    validator.validate.apply(validator, args);
-                });
-            });
-            this.validator = new Anon(options);
-        };
-        ValidatorResolver.prototype.run = function (record) {
-            if (this.attribute) {
-                this.validator.validate(record, this.attribute, _.get(record, this.attribute));
-            }
-        };
-        ValidatorResolver.namedValidators = {};
-        return ValidatorResolver;
-    }());
-    Dougal.ValidatorResolver = ValidatorResolver;
-})(Dougal || (Dougal = {}));
-var Dougal;
-(function (Dougal) {
-    var ErrorHandler = (function () {
-        function ErrorHandler(record) {
-            var _this = this;
-            this.messages = {};
-            _(record.attributes)
-                .keys()
-                .each(function (key) {
-                _this.init(key);
-            });
-        }
-        ErrorHandler.prototype.add = function (attribute, message) {
-            if (_.isUndefined(this.messages[attribute])) {
-                this.init(attribute);
-            }
-            if (_.includes(this.messages[attribute], message)) {
-                return;
-            }
-            this.messages[attribute].push(message);
-        };
-        ErrorHandler.prototype.any = function () {
-            return _(this.messages)
-                .values()
-                .flatten()
-                .isEmpty();
-        };
-        ErrorHandler.prototype.init = function (attribute) {
-            var _this = this;
-            this.messages[attribute] = [];
-            Object.defineProperty(this, attribute, {
-                get: function () {
-                    return _this.messages[attribute];
                 }
-            });
-        };
-        return ErrorHandler;
-    }());
-    Dougal.ErrorHandler = ErrorHandler;
-})(Dougal || (Dougal = {}));
-var Dougal;
-(function (Dougal) {
-    var LengthValidator = (function (_super) {
-        __extends(LengthValidator, _super);
-        function LengthValidator() {
-            _super.apply(this, arguments);
-        }
-        LengthValidator.prototype.validate = function (record, attribute, value) {
-            var _this = this;
-            var length = _.size(value);
-            var lengthOptions = this.options.length;
-            var results = {
-                is: length !== lengthOptions.is,
-                minimum: length < lengthOptions.minimum,
-                maximum: length > lengthOptions.maximum
+                this.attribute = args[0];
+                this.resolveValidator(args[1]);
             };
-            _.each(results, function (valid, test) {
-                if (lengthOptions[test] && valid) {
-                    record.errors.add(attribute, _this.options.message);
+            ValidatorResolver.prototype.resolveValidator = function (validator) {
+                if (validator instanceof Dougal.Validator) {
+                    this.validator = validator;
                 }
-            });
-        };
-        return LengthValidator;
-    }(Dougal.Validator));
-    Dougal.LengthValidator = LengthValidator;
-    Dougal.ValidatorResolver.namedValidators['length'] = LengthValidator;
+                else if (_.isString(validator)) {
+                    this.resolveString(validator);
+                }
+                else if (_.isObject(validator)) {
+                    this.resolveObject(validator);
+                }
+                else {
+                    throw ResolverErrors.INVALID_FORMAT;
+                }
+            };
+            ValidatorResolver.prototype.resolveString = function (method) {
+                var Anon = Dougal.Validator.simple(function (record, attribute, value) {
+                    _.get(record, method, _.noop).call(record, attribute, value);
+                });
+                this.validator = new Anon();
+            };
+            ValidatorResolver.prototype.resolveObject = function (options) {
+                var validators = _(options)
+                    .keys()
+                    .map(function (key) {
+                    return Dougal.Validations[_.capitalize(key) + 'Validator'];
+                })
+                    .without(undefined)
+                    .map(function (Validator) {
+                    return new Validator(options);
+                })
+                    .value();
+                var Anon = Dougal.Validator.simple(function () {
+                    var args = arguments;
+                    _.each(validators, function (validator) {
+                        validator.validate.apply(validator, args);
+                    });
+                });
+                this.validator = new Anon(options);
+            };
+            ValidatorResolver.prototype.run = function (record) {
+                if (this.attribute) {
+                    this.validator.validate(record, this.attribute, _.get(record, this.attribute));
+                }
+            };
+            return ValidatorResolver;
+        }());
+        Validations.ValidatorResolver = ValidatorResolver;
+    })(Validations = Dougal.Validations || (Dougal.Validations = {}));
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    var PresenceValidator = (function (_super) {
-        __extends(PresenceValidator, _super);
-        function PresenceValidator() {
-            _super.apply(this, arguments);
-        }
-        PresenceValidator.prototype.validate = function (record, attribute, value) {
-            if (this.options.presence && _.isEmpty(value)) {
-                record.errors.add(attribute, this.options.message);
+    var Validations;
+    (function (Validations) {
+        var ErrorHandler = (function () {
+            function ErrorHandler(record) {
+                var _this = this;
+                this.messages = {};
+                _(record.attributes)
+                    .keys()
+                    .each(function (key) {
+                    _this.init(key);
+                });
             }
-        };
-        return PresenceValidator;
-    }(Dougal.Validator));
-    Dougal.PresenceValidator = PresenceValidator;
-    Dougal.ValidatorResolver.namedValidators['presence'] = PresenceValidator;
+            ErrorHandler.prototype.add = function (attribute, message) {
+                if (_.isUndefined(this.messages[attribute])) {
+                    this.init(attribute);
+                }
+                if (_.includes(this.messages[attribute], message)) {
+                    return;
+                }
+                this.messages[attribute].push(message);
+            };
+            ErrorHandler.prototype.any = function () {
+                return _(this.messages)
+                    .values()
+                    .flatten()
+                    .isEmpty();
+            };
+            ErrorHandler.prototype.init = function (attribute) {
+                var _this = this;
+                this.messages[attribute] = [];
+                Object.defineProperty(this, attribute, {
+                    get: function () {
+                        return _this.messages[attribute];
+                    }
+                });
+            };
+            return ErrorHandler;
+        }());
+        Validations.ErrorHandler = ErrorHandler;
+    })(Validations = Dougal.Validations || (Dougal.Validations = {}));
 })(Dougal || (Dougal = {}));
-///<reference path="../node_modules/@types/lodash/index.d.ts" />
+var Dougal;
+(function (Dougal) {
+    var Validations;
+    (function (Validations) {
+        var LengthValidator = (function (_super) {
+            __extends(LengthValidator, _super);
+            function LengthValidator() {
+                _super.apply(this, arguments);
+            }
+            LengthValidator.prototype.validate = function (record, attribute, value) {
+                var _this = this;
+                var length = _.size(value);
+                var lengthOptions = this.options.length;
+                var results = {
+                    is: length !== lengthOptions.is,
+                    minimum: length < lengthOptions.minimum,
+                    maximum: length > lengthOptions.maximum
+                };
+                _.each(results, function (valid, test) {
+                    if (lengthOptions[test] && valid) {
+                        record.errors.add(attribute, _this.options.message);
+                    }
+                });
+            };
+            return LengthValidator;
+        }(Dougal.Validator));
+        Validations.LengthValidator = LengthValidator;
+    })(Validations = Dougal.Validations || (Dougal.Validations = {}));
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
+    var Validations;
+    (function (Validations) {
+        var PresenceValidator = (function (_super) {
+            __extends(PresenceValidator, _super);
+            function PresenceValidator() {
+                _super.apply(this, arguments);
+            }
+            PresenceValidator.prototype.validate = function (record, attribute, value) {
+                if (this.options.presence && _.isEmpty(value)) {
+                    record.errors.add(attribute, this.options.message);
+                }
+            };
+            return PresenceValidator;
+        }(Dougal.Validator));
+        Validations.PresenceValidator = PresenceValidator;
+    })(Validations = Dougal.Validations || (Dougal.Validations = {}));
+})(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
     var Model = (function () {
@@ -248,7 +260,7 @@ var Dougal;
         Object.defineProperty(Model.prototype, "valid", {
             get: function () {
                 if (!this.errors) {
-                    this.errors = new Dougal.ErrorHandler(this);
+                    this.errors = new Dougal.Validations.ErrorHandler(this);
                     this.validate();
                 }
                 return this.errors.any();
@@ -258,13 +270,13 @@ var Dougal;
         });
         Model.prototype.validate = function () {
             var _this = this;
-            this.errors = new Dougal.ErrorHandler(this);
+            this.errors = new Dougal.Validations.ErrorHandler(this);
             _.each(this.validators, function (resolver) {
                 resolver.run(_this);
             });
         };
         Model.prototype.validates = function () {
-            this.validators.push(new Dougal.ValidatorResolver(arguments));
+            this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
         };
         Model = __decorate([
             Extendable
@@ -273,4 +285,3 @@ var Dougal;
     }());
     Dougal.Model = Model;
 })(Dougal || (Dougal = {}));
-window.Dougal = Dougal;
