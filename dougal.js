@@ -1,5 +1,3 @@
-///<reference path="../node_modules/@types/lodash/index.d.ts" />
-window['Dougal'] = Dougal;
 function Extendable(BaseClass) {
     BaseClass.extends = function (constructor, prototype) {
         function Extended() {

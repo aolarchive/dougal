@@ -1,6 +1,8 @@
 // Karma configuration
 // Generated on Thu Nov 10 2016 23:48:44 GMT+0000 (GMT Standard Time)
 
+const tsconfig = require('./tsconfig.json');
+
 module.exports = function(config) {
   config.set({
 
@@ -10,15 +12,14 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', "karma-typescript"],
 
 
     // list of files / patterns to load in the browser
     files: [
       'node_modules/lodash/lodash.js',
-      'dougal.js',
       'test/**/*.js'
-    ],
+    ].concat(tsconfig.files),
 
 
     // list of files to exclude
@@ -29,14 +30,14 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'dougal.js': ['coverage']
+      '**/*.ts': ['karma-typescript']
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'coverage'],
+    reporters: ['progress', 'karma-typescript'],
 
 
     // web server port

@@ -9,8 +9,6 @@
     "outFile": "dougal.js"
   },
   "files": [
-    "node_modules/@types/lodash/index.d.ts",
-    "lib/dougal.ts",
     "lib/extends.ts",
     "lib/validator.ts",
     "lib/validations/validatorResolver.ts",
