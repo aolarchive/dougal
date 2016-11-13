@@ -1,11 +1,20 @@
 {
-    "compilerOptions": {
-        "module": "none",
-        "target": "es5",
-        "noImplicitAny": false,
-        "sourceMap": false,
-        "experimentalDecorators": true,
-        "baseUrl": "src",
-        "outFile": "dougal.js"
-    }
+  "compilerOptions": {
+    "module": "none",
+    "target": "es5",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "experimentalDecorators": true,
+    "baseUrl": "lib",
+    "outFile": "dougal.js"
+  },
+  "files": [
+    "lib/extends.ts",
+    "lib/validator.ts",
+    "lib/validations/ValidatorResolver.ts",
+    "lib/validations/errorHandler.ts",
+    "lib/validations/length.ts",
+    "lib/validations/presence.ts",
+    "lib/model.ts"
+  ]
 }
