@@ -60,7 +60,7 @@ describe('dougal', function () {
     expect(donald.valid).toBe(false);
 
     donald.birthdate = new Date(new Date().getTime() + 1000);
-    expect(donald.errors.birthdate).toBeUndefined();
+    expect(donald.errors.birthdate).toEqual([]);
     expect(donald.valid).toBe(true);
   });
 });
