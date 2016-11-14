@@ -16,10 +16,11 @@ module.exports = function(config) {
 
 
     // list of files / patterns to load in the browser
-    files: [
+    files: tsconfig.files.concat([
       'node_modules/lodash/lodash.js',
+      'test/**/*.ts',
       'test/**/*.js'
-    ].concat(tsconfig.files),
+    ]),
 
 
     // list of files to exclude

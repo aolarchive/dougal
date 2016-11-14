@@ -66,7 +66,7 @@ namespace Dougal {
       });
     }
 
-    protected validates() {
+    protected validates(...args: any[]) {
       this.validators.push(new Validations.ValidatorResolver(arguments));
     }
   }

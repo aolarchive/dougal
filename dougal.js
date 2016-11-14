@@ -169,8 +169,8 @@ var Dougal;
     (function (Validations) {
         var LengthValidator = (function (_super) {
             __extends(LengthValidator, _super);
-            function LengthValidator() {
-                _super.apply(this, arguments);
+            function LengthValidator(options) {
+                _super.call(this, options);
             }
             LengthValidator.prototype.validate = function (record, attribute, value) {
                 var _this = this;
@@ -274,6 +274,10 @@ var Dougal;
             });
         };
         Model.prototype.validates = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
             this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
         };
         Model = __decorate([

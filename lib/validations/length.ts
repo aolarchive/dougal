@@ -6,7 +6,12 @@ namespace Dougal.Validations {
   }
 
   export class LengthValidator extends Validator {
-    validate(record: any, attribute: string, value: any) {
+
+    constructor(options?: any) {
+      super(options);
+    }
+
+    validate(record: Model, attribute: string, value: any) {
       let length = _.size(value);
       let lengthOptions: ILengthOptions = this.options.length;
 
