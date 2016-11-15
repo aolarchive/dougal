@@ -9,12 +9,13 @@
     "outFile": "dougal.js"
   },
   "files": [
+    "lib/dougal.ts",
     "lib/extends.ts",
+    "lib/model.ts",
     "lib/validator.ts",
     "lib/validations/validatorResolver.ts",
     "lib/validations/errorHandler.ts",
     "lib/validations/length.ts",
-    "lib/validations/presence.ts",
-    "lib/model.ts"
+    "lib/validations/presence.ts"
   ]
 }

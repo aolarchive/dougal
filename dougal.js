@@ -1,15 +1,18 @@
 (function (Dougal) { 'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/// <reference path="../node_modules/@types/lodash/index.d.ts" />
+// statement required so that karma-typescript does not complain
+'';
 function Extendable(BaseClass) {
     BaseClass.extends = function (constructor, prototype) {
         function Extended() {
@@ -23,6 +26,84 @@ function Extendable(BaseClass) {
         return Extended;
     };
 }
+var Dougal;
+(function (Dougal) {
+    var Model = (function () {
+        function Model() {
+            this.attributes = {};
+            this.getters = {};
+            this.setters = {};
+            this.validators = [];
+        }
+        Model.prototype.attribute = function (name, options) {
+            var _this = this;
+            if (options === void 0) { options = {}; }
+            if (options.get) {
+                this.getters[name] = options.get;
+            }
+            if (options.set) {
+                this.setters[name] = options.set;
+            }
+            Object.defineProperty(this, name, {
+                get: function () {
+                    return _this.get(name);
+                },
+                set: function (value) {
+                    _this.set(name, value);
+                }
+            });
+        };
+        Model.prototype.get = function (key) {
+            if (this.getters[key]) {
+                return this.getters[key].call(this);
+            }
+            else {
+                return _.get(this.attributes, key);
+            }
+        };
+        Model.prototype.save = function () {
+        };
+        Model.prototype.set = function (key, value) {
+            if (this.setters[key]) {
+                this.setters[key].call(this, value);
+            }
+            else {
+                _.set(this.attributes, key, value);
+            }
+            this.validate();
+        };
+        Object.defineProperty(Model.prototype, "valid", {
+            get: function () {
+                if (!this.errors) {
+                    this.errors = new Dougal.Validations.ErrorHandler(this);
+                    this.validate();
+                }
+                return this.errors.any();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Model.prototype.validate = function () {
+            var _this = this;
+            this.errors = new Dougal.Validations.ErrorHandler(this);
+            _.each(this.validators, function (resolver) {
+                resolver.run(_this);
+            });
+        };
+        Model.prototype.validates = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
+        };
+        Model = __decorate([
+            Extendable
+        ], Model);
+        return Model;
+    }());
+    Dougal.Model = Model;
+})(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
     var Validator = (function () {
@@ -211,82 +292,6 @@ var Dougal;
         }(Dougal.Validator));
         Validations.PresenceValidator = PresenceValidator;
     })(Validations = Dougal.Validations || (Dougal.Validations = {}));
-})(Dougal || (Dougal = {}));
-var Dougal;
-(function (Dougal) {
-    var Model = (function () {
-        function Model() {
-            this.attributes = {};
-            this.getters = {};
-            this.setters = {};
-            this.validators = [];
-        }
-        Model.prototype.attribute = function (name, options) {
-            var _this = this;
-            if (options === void 0) { options = {}; }
-            if (options.get) {
-                this.getters[name] = options.get;
-            }
-            if (options.set) {
-                this.setters[name] = options.set;
-            }
-            Object.defineProperty(this, name, {
-                get: function () {
-                    return _this.get(name);
-                },
-                set: function (value) {
-                    _this.set(name, value);
-                }
-            });
-        };
-        Model.prototype.get = function (key) {
-            if (this.getters[key]) {
-                return this.getters[key].call(this);
-            }
-            else {
-                return _.get(this.attributes, key);
-            }
-        };
-        Model.prototype.set = function (key, value) {
-            if (this.setters[key]) {
-                this.setters[key].call(this, value);
-            }
-            else {
-                _.set(this.attributes, key, value);
-            }
-            this.validate();
-        };
-        Object.defineProperty(Model.prototype, "valid", {
-            get: function () {
-                if (!this.errors) {
-                    this.errors = new Dougal.Validations.ErrorHandler(this);
-                    this.validate();
-                }
-                return this.errors.any();
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Model.prototype.validate = function () {
-            var _this = this;
-            this.errors = new Dougal.Validations.ErrorHandler(this);
-            _.each(this.validators, function (resolver) {
-                resolver.run(_this);
-            });
-        };
-        Model.prototype.validates = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-            this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
-        };
-        Model = __decorate([
-            Extendable
-        ], Model);
-        return Model;
-    }());
-    Dougal.Model = Model;
 })(Dougal || (Dougal = {}));
 
 })(window.Dougal = {});
