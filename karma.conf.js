@@ -18,7 +18,9 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/q/q.js',
-      'node_modules/lodash/lodash.js'
+      'node_modules/lodash/lodash.js',
+      'node_modules/urijs/src/URI.js',
+      'node_modules/urijs/src/URITemplate.js'
     ].concat(tsconfig.files)
     .concat(['test/**/*.ts']),
 

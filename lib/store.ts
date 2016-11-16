@@ -1,20 +1,22 @@
 namespace Dougal {
   @Extendable
   export class Serializer {
-    format(record: Model): any {
-      return record.attributes;
+    constructor(private record: Model) {
+    }
+
+    format(): any {
+      return _.cloneDeep(this.record.attributes);
     }
 
     parse(object: any): any {
       return object;
     }
   }
-  
-  @Extendable
-  export abstract class Store {
-    abstract create(record: any): Q.Promise<any>
-    abstract read(options?: any): Q.Promise<any>
-    abstract update(record: any): Q.Promise<any>
-    abstract delete(record: any): Q.Promise<any>
+
+  export interface Store {
+    create(record: Model): Q.Promise<any>
+    read(record: Model): Q.Promise<any>
+    update(record: Model): Q.Promise<any>
+    delete(record: Model): Q.Promise<any>
   }
 }

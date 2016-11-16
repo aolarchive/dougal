@@ -13,8 +13,9 @@ namespace Dougal {
     errors: Validations.ErrorHandler;
     getters: any = {};
     setters: any = {};
-    serializer = new Serializer();
+    serializer = new Serializer(this);
     store: Store;
+    urlRoot: string;
     validators: Validations.ValidatorResolver[] = [];
 
     protected attribute(name: string, options: Attribute = {}) {
@@ -49,7 +50,7 @@ namespace Dougal {
       if (this.errors.any()) {
         return Q.reject(this.errors);
       }
-      return this.store.create(this.serializer.format(this))
+      return this.store.create(this)
         .then((response) => {
           _.assign(this.attributes, this.serializer.parse(response));
           return this;
@@ -63,6 +64,10 @@ namespace Dougal {
         _.set(this.attributes, key, value);
       }
       this.validate();
+    }
+
+    public url() {
+      return new URITemplate(this.urlRoot).expand(this);
     }
 
     get valid() {

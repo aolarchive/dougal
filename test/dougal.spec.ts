@@ -2,28 +2,28 @@ describe('dougal', function () {
 
   var President, BirthDateValidator;
 
-  class LocalStore extends Dougal.Store {
-    constructor(private path: string) {
-      super();
-    }
+  class LocalStore implements Dougal.Store {
 
     create(record): Q.Promise<any> {
+      record.id = _.uniqueId();
       let id = _.uniqueId();
-      localStorage.setItem(this.path + '.' + id, JSON.stringify(_.assign({id: id}, record)));
-      return this.read(id);
+      let object = record.serializer.format();
+      localStorage.setItem(record.url(), JSON.stringify(object));
+      return this.read(record);
     }
 
-    read(id): Q.Promise<any> {
-      return Q.when(JSON.parse(localStorage.getItem(this.path + '.' + id)));
+    read(record): Q.Promise<any> {
+      return Q.when(JSON.parse(localStorage.getItem(record.url())));
     }
 
     update(record): Q.Promise<any> {
-      localStorage.setItem(this.path + '.' + record.id, JSON.stringify(record));
-      return this.read(record.id);
+      let object = record.serializer.format();
+      localStorage.setItem(record.url(), JSON.stringify(object));
+      return Q.when(object);
     }
 
     delete(record): Q.Promise<any> {
-      _.set(localStorage, this.path, '');
+      _.set(localStorage, record.url(), '');
       return Q.when({});
     }
   }
@@ -39,7 +39,8 @@ describe('dougal', function () {
 
     President = Dougal.Model.extends(function () {
       this.store = new LocalStore('presidents');
-      
+      this.urlRoot = 'presidents/{id}'
+
       this.attribute('id');
 
       this.attribute('name', {
@@ -95,7 +96,7 @@ describe('dougal', function () {
 
     donald.save()
       .then(() => {
-        expect(JSON.parse(localStorage.getItem('presidents.1')))
+        expect(JSON.parse(localStorage.getItem('presidents/1')))
           .toEqual(donald.attributes);
         expect(donald.id).toEqual('1');
       })

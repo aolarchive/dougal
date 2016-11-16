@@ -1,4 +1,3 @@
-(function (Dougal) { 'use strict';
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -71,7 +70,7 @@ var Dougal;
             if (this.errors.any()) {
                 return Dougal.Q.reject(this.errors);
             }
-            return this.store.create(this.serializer.format(this))
+            return this.store.create(this)
                 .then(function (response) {
                 _.assign(_this.attributes, _this.serializer.parse(response));
                 return _this;
@@ -135,15 +134,6 @@ var Dougal;
         return Serializer;
     }());
     Dougal.Serializer = Serializer;
-    var Store = (function () {
-        function Store() {
-        }
-        Store = __decorate([
-            Extendable
-        ], Store);
-        return Store;
-    }());
-    Dougal.Store = Store;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -334,5 +324,3 @@ var Dougal;
         Validations.PresenceValidator = PresenceValidator;
     })(Validations = Dougal.Validations || (Dougal.Validations = {}));
 })(Dougal || (Dougal = {}));
-
-})(window.Dougal = {});
