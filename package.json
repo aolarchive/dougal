@@ -12,11 +12,15 @@
     "urijs": "^1.18.2"
   },
   "devDependencies": {
+    "@types/angular": "^1.5.20",
+    "@types/angular-mocks": "^1.5.6",
     "@types/jasmine": "^2.5.38",
     "@types/lodash": "^4.14.38",
     "@types/q": "0.0.32",
     "@types/urijs": "^1.15.31",
     "@types/uritemplate": "^0.3.2",
+    "angular": "^1.5.8",
+    "angular-mocks": "^1.5.8",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-typescript": "^3.1.3",

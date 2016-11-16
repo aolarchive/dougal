@@ -34,7 +34,7 @@ namespace Dougal {
         set: (value) => {
           this.set(name, value);
         }
-      })
+      });
     }
 
     public get(key): any {

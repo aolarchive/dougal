@@ -1,7 +1,3 @@
-/// <reference path="../../node_modules/@types/jasmine/index.d.ts" />
-/// <reference path="../../lib/validations/length.ts" />
-/// <reference path="../../lib/model.ts" />
-
 describe('Dougal.Validations.LengthValidator', () => {
   type LengthValidator = Dougal.Validations.LengthValidator;
   const LengthValidator = Dougal.Validations.LengthValidator;

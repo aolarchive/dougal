@@ -1,6 +1,6 @@
-/// <reference path="../node_modules/@types/lodash/index.d.ts" />
-/// <reference path="../node_modules/@types/q/index.d.ts" />
-/// <reference path="../node_modules/@types/urijs/index.d.ts" />
+/// <reference types="lodash" />
+/// <reference types="q" />
+/// <reference types="urijs" />
 
 namespace Dougal {
   export const Q = window['Q'];

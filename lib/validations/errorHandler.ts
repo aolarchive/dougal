@@ -7,7 +7,7 @@ namespace Dougal.Validations {
         .keys()
         .each((key) => {
           this.init(key);
-        })
+        });
     }
 
     add(attribute, message) {
@@ -33,7 +33,7 @@ namespace Dougal.Validations {
         get: () => {
           return this.messages[attribute];
         }
-      })
+      });
     }
   }
 }

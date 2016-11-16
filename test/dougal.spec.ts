@@ -1,76 +1,4 @@
 describe('dougal', function () {
-
-  var President, BirthDateValidator;
-
-  class LocalStore implements Dougal.Store {
-
-    create(record): Q.Promise<any> {
-      record.id = _.uniqueId();
-      let id = _.uniqueId();
-      let object = record.serializer.format();
-      localStorage.setItem(record.url(), JSON.stringify(object));
-      return this.read(record);
-    }
-
-    read(record): Q.Promise<any> {
-      return Q.when(JSON.parse(localStorage.getItem(record.url())));
-    }
-
-    update(record): Q.Promise<any> {
-      let object = record.serializer.format();
-      localStorage.setItem(record.url(), JSON.stringify(object));
-      return Q.when(object);
-    }
-
-    delete(record): Q.Promise<any> {
-      _.set(localStorage, record.url(), '');
-      return Q.when({});
-    }
-  }
-
-  beforeEach(function () {
-    BirthDateValidator = Dougal.Validator.extends(function () {
-      this.validate = function (president, attribute, value) {
-        if (value < new Date()) {
-          president.errors.add(attribute, this.options.message);
-        }
-      };
-    });
-
-    President = Dougal.Model.extends(function () {
-      this.store = new LocalStore('presidents');
-      this.urlRoot = 'presidents/{id}'
-
-      this.attribute('id');
-
-      this.attribute('name', {
-        set: function (name) {
-          this.attributes.name = (name || '').trim();
-        }
-      });
-      this.validates('name', {
-        presence: true,
-        length: {minimum: 2},
-        message: 'Name is required'
-      });
-      this.validates('name', 'validatePresidentName');
-
-      this.attribute('birthdate');
-      this.validates('birthdate', new BirthDateValidator({message: 'No babies allowed'}));
-
-
-      this.isPresident = function () {
-        return _.lowerCase(this.name) === 'donald';
-      };
-
-      this.validatePresidentName = function () {
-        if (!this.isPresident()) {
-          this.errors.add('name', 'Donald is the president!');
-        }
-      };
-    });
-  });
-
   it('should', function (done) {
     expect(President).toBeDefined();
     var donald = new President();
@@ -96,7 +24,7 @@ describe('dougal', function () {
 
     donald.save()
       .then(() => {
-        expect(JSON.parse(localStorage.getItem('presidents/1')))
+        expect(JSON.parse(localStorage.getItem('/presidents/1')))
           .toEqual(donald.attributes);
         expect(donald.id).toEqual('1');
       })

@@ -4,7 +4,7 @@
   angular.module('dougal', [])
     .constant('Dougal', Dougal)
     .factory('$httpStore', ['Dougal', '$http', function (Dougal, $http) {
-      function $httpStore() {
+      return function $httpStore() {
         this.create = function (record) {
           return $http({
             method: 'POST',
@@ -15,8 +15,6 @@
           });
         };
       }
-
-      return Dougal.Store.extends($httpStore);
     }])
     .run(['Dougal', '$q', function (Dougal, $q) {
       Dougal.Q = $q;

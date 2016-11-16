@@ -1,3 +1,4 @@
+(function (Dougal) { 'use strict';
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,8 +10,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="../node_modules/@types/lodash/index.d.ts" />
-/// <reference path="../node_modules/@types/q/index.d.ts" />
+/// <reference types="lodash" />
+/// <reference types="q" />
+/// <reference types="urijs" />
 var Dougal;
 (function (Dougal) {
     Dougal.Q = window['Q'];
@@ -35,7 +37,7 @@ var Dougal;
             this.attributes = {};
             this.getters = {};
             this.setters = {};
-            this.serializer = new Dougal.Serializer();
+            this.serializer = new Dougal.Serializer(this);
             this.validators = [];
         }
         Model.prototype.attribute = function (name, options) {
@@ -85,6 +87,9 @@ var Dougal;
             }
             this.validate();
         };
+        Model.prototype.url = function () {
+            return new URITemplate(this.urlRoot).expand(this);
+        };
         Object.defineProperty(Model.prototype, "valid", {
             get: function () {
                 if (!this.errors) {
@@ -120,10 +125,11 @@ var Dougal;
 var Dougal;
 (function (Dougal) {
     var Serializer = (function () {
-        function Serializer() {
+        function Serializer(record) {
+            this.record = record;
         }
-        Serializer.prototype.format = function (record) {
-            return record.attributes;
+        Serializer.prototype.format = function () {
+            return _.cloneDeep(this.record.attributes);
         };
         Serializer.prototype.parse = function (object) {
             return object;
@@ -324,3 +330,5 @@ var Dougal;
         Validations.PresenceValidator = PresenceValidator;
     })(Validations = Dougal.Validations || (Dougal.Validations = {}));
 })(Dougal || (Dougal = {}));
+
+})(window.Dougal = {});
