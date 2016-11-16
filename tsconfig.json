@@ -12,6 +12,7 @@
     "lib/dougal.ts",
     "lib/extends.ts",
     "lib/model.ts",
+    "lib/store.ts",
     "lib/validator.ts",
     "lib/validations/validatorResolver.ts",
     "lib/validations/errorHandler.ts",

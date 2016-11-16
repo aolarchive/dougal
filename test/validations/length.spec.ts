@@ -2,10 +2,10 @@
 /// <reference path="../../lib/validations/length.ts" />
 /// <reference path="../../lib/model.ts" />
 
-type LengthValidator = Dougal.Validations.LengthValidator;
-const LengthValidator = Dougal.Validations.LengthValidator;
-
 describe('Dougal.Validations.LengthValidator', () => {
+  type LengthValidator = Dougal.Validations.LengthValidator;
+  const LengthValidator = Dougal.Validations.LengthValidator;
+
   let model: SampleModel;
   let options: any = {length: {}, message: 'error'};
   let length = new LengthValidator(options);

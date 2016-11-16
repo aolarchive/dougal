@@ -21,7 +21,7 @@ namespace Dougal.Validations {
     }
 
     any() {
-      return _(this.messages)
+      return !_(this.messages)
         .values()
         .flatten()
         .isEmpty();

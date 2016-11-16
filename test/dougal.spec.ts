@@ -2,6 +2,32 @@ describe('dougal', function () {
 
   var President, BirthDateValidator;
 
+  class LocalStore extends Dougal.Store {
+    constructor(private path: string) {
+      super();
+    }
+
+    create(record): Q.Promise<any> {
+      let id = _.uniqueId();
+      localStorage.setItem(this.path + '.' + id, JSON.stringify(_.assign({id: id}, record)));
+      return this.read(id);
+    }
+
+    read(id): Q.Promise<any> {
+      return Q.when(JSON.parse(localStorage.getItem(this.path + '.' + id)));
+    }
+
+    update(record): Q.Promise<any> {
+      localStorage.setItem(this.path + '.' + record.id, JSON.stringify(record));
+      return this.read(record.id);
+    }
+
+    delete(record): Q.Promise<any> {
+      _.set(localStorage, this.path, '');
+      return Q.when({});
+    }
+  }
+
   beforeEach(function () {
     BirthDateValidator = Dougal.Validator.extends(function () {
       this.validate = function (president, attribute, value) {
@@ -12,6 +38,10 @@ describe('dougal', function () {
     });
 
     President = Dougal.Model.extends(function () {
+      this.store = new LocalStore('presidents');
+      
+      this.attribute('id');
+
       this.attribute('name', {
         set: function (name) {
           this.attributes.name = (name || '').trim();
@@ -40,7 +70,7 @@ describe('dougal', function () {
     });
   });
 
-  it('should', function () {
+  it('should', function (done) {
     expect(President).toBeDefined();
     var donald = new President();
     expect(donald instanceof Dougal.Model).toBe(true);
@@ -62,5 +92,13 @@ describe('dougal', function () {
     donald.birthdate = new Date(new Date().getTime() + 1000);
     expect(donald.errors.birthdate).toEqual([]);
     expect(donald.valid).toBe(true);
+
+    donald.save()
+      .then(() => {
+        expect(JSON.parse(localStorage.getItem('presidents.1')))
+          .toEqual(donald.attributes);
+        expect(donald.id).toEqual('1');
+      })
+      .finally(done);
   });
 });

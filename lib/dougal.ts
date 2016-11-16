@@ -1,4 +1,6 @@
 /// <reference path="../node_modules/@types/lodash/index.d.ts" />
+/// <reference path="../node_modules/@types/q/index.d.ts" />
 
-// empty statement required so that karma-typescript does not complain
-'';
+namespace Dougal {
+  export const Q = window['Q'];
+}

@@ -13,6 +13,8 @@ namespace Dougal {
     errors: Validations.ErrorHandler;
     getters: any = {};
     setters: any = {};
+    serializer = new Serializer();
+    store: Store;
     validators: Validations.ValidatorResolver[] = [];
 
     protected attribute(name: string, options: Attribute = {}) {
@@ -42,6 +44,18 @@ namespace Dougal {
       }
     }
 
+    public save(): Q.Promise<Model|Validations.ErrorHandler> {
+      this.validate();
+      if (this.errors.any()) {
+        return Q.reject(this.errors);
+      }
+      return this.store.create(this.serializer.format(this))
+        .then((response) => {
+          _.assign(this.attributes, this.serializer.parse(response));
+          return this;
+        });
+    }
+
     public set(key, value) {
       if (this.setters[key]) {
         this.setters[key].call(this, value);
@@ -56,7 +70,7 @@ namespace Dougal {
         this.errors = new Validations.ErrorHandler(this);
         this.validate();
       }
-      return this.errors.any();
+      return !this.errors.any();
     }
 
     public validate() {

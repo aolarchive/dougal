@@ -11,8 +11,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="../node_modules/@types/lodash/index.d.ts" />
-// statement required so that karma-typescript does not complain
-'';
+/// <reference path="../node_modules/@types/q/index.d.ts" />
+var Dougal;
+(function (Dougal) {
+    Dougal.Q = window['Q'];
+})(Dougal || (Dougal = {}));
 function Extendable(BaseClass) {
     BaseClass.extends = function (constructor, prototype) {
         function Extended() {
@@ -33,6 +36,7 @@ var Dougal;
             this.attributes = {};
             this.getters = {};
             this.setters = {};
+            this.serializer = new Dougal.Serializer();
             this.validators = [];
         }
         Model.prototype.attribute = function (name, options) {
@@ -62,6 +66,16 @@ var Dougal;
             }
         };
         Model.prototype.save = function () {
+            var _this = this;
+            this.validate();
+            if (this.errors.any()) {
+                return Dougal.Q.reject(this.errors);
+            }
+            return this.store.create(this.serializer.format(this))
+                .then(function (response) {
+                _.assign(_this.attributes, _this.serializer.parse(response));
+                return _this;
+            });
         };
         Model.prototype.set = function (key, value) {
             if (this.setters[key]) {
@@ -78,7 +92,7 @@ var Dougal;
                     this.errors = new Dougal.Validations.ErrorHandler(this);
                     this.validate();
                 }
-                return this.errors.any();
+                return !this.errors.any();
             },
             enumerable: true,
             configurable: true
@@ -103,6 +117,33 @@ var Dougal;
         return Model;
     }());
     Dougal.Model = Model;
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
+    var Serializer = (function () {
+        function Serializer() {
+        }
+        Serializer.prototype.format = function (record) {
+            return record.attributes;
+        };
+        Serializer.prototype.parse = function (object) {
+            return object;
+        };
+        Serializer = __decorate([
+            Extendable
+        ], Serializer);
+        return Serializer;
+    }());
+    Dougal.Serializer = Serializer;
+    var Store = (function () {
+        function Store() {
+        }
+        Store = __decorate([
+            Extendable
+        ], Store);
+        return Store;
+    }());
+    Dougal.Store = Store;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -226,7 +267,7 @@ var Dougal;
                 this.messages[attribute].push(message);
             };
             ErrorHandler.prototype.any = function () {
-                return _(this.messages)
+                return !_(this.messages)
                     .values()
                     .flatten()
                     .isEmpty();
