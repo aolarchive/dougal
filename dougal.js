@@ -17,19 +17,23 @@ var Dougal;
 (function (Dougal) {
     Dougal.Q = window['Q'];
 })(Dougal || (Dougal = {}));
-function Extendable(BaseClass) {
-    BaseClass.extends = function (constructor, prototype) {
-        function Extended() {
-            BaseClass.apply(this, arguments);
-            constructor.apply(this, arguments);
-        }
-        Extended.prototype = Object.create(BaseClass.prototype, {
-            constructor: Extended
-        });
-        _.assign(Extended.prototype, prototype);
-        return Extended;
-    };
-}
+var Dougal;
+(function (Dougal) {
+    function Extendable(BaseClass) {
+        BaseClass.extends = function (constructor, prototype) {
+            function Extended() {
+                BaseClass.apply(this, arguments);
+                constructor.apply(this, arguments);
+            }
+            Extended.prototype = Object.create(BaseClass.prototype, {
+                constructor: Extended
+            });
+            _.assign(Extended.prototype, prototype);
+            return Extended;
+        };
+    }
+    Dougal.Extendable = Extendable;
+})(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
     var Model = (function () {
@@ -116,7 +120,7 @@ var Dougal;
             this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
         };
         Model = __decorate([
-            Extendable
+            Dougal.Extendable
         ], Model);
         return Model;
     }());
@@ -135,7 +139,7 @@ var Dougal;
             return object;
         };
         Serializer = __decorate([
-            Extendable
+            Dougal.Extendable
         ], Serializer);
         return Serializer;
     }());
@@ -160,7 +164,7 @@ var Dougal;
             }(Validator));
         };
         Validator = __decorate([
-            Extendable
+            Dougal.Extendable
         ], Validator);
         return Validator;
     }());

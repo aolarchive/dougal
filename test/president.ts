@@ -3,7 +3,11 @@
 /// <reference path="../lib/store.ts" />
 /// <reference path="../lib/validator.ts" />
 
-class BirthDateValidator extends Dougal.Validator {
+import Model = Dougal.Model;
+import Store = Dougal.Store;
+import Validator = Dougal.Validator;
+
+class BirthDateValidator extends Validator {
   validate(president, attribute, value) {
     if (value < new Date()) {
       president.errors.add(attribute, this.options.message);
@@ -11,7 +15,7 @@ class BirthDateValidator extends Dougal.Validator {
   }
 }
 
-class LocalStore implements Dougal.Store {
+class LocalStore implements Store {
 
   create(record): Q.Promise<any> {
     record.id = _.uniqueId();
@@ -37,7 +41,7 @@ class LocalStore implements Dougal.Store {
   }
 }
 
-class President extends Dougal.Model {
+class President extends Model {
   store = new LocalStore();
   urlRoot = '/presidents/{id}';
 
