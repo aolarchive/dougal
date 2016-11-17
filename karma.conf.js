@@ -27,7 +27,7 @@ module.exports = function(config) {
     .concat(tsconfig.files)
     .concat([
       'test/**/*.ts',
-      'dougal-angular.js'
+      'lib/dougal-angular.ts'
     ]),
 
 

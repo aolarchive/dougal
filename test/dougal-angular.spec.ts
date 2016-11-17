@@ -44,6 +44,24 @@ describe('dougal-angular', () => {
 
       expect(president.id).toBe(1);
     });
+
+    it('should read an existing record', function () {
+      $httpBackend.expectGET('/presidents/1')
+        .respond({
+          id: 1,
+          name: 'Donald'
+        });
+
+      president.id = 1;
+      store.read(president)
+        .then((response) => {
+          expect(response).toEqual({
+            id: 1,
+            name: 'Donald'
+          });
+        });
+      $httpBackend.flush();
+    });
   });
 
 });
