@@ -62,6 +62,39 @@ describe('dougal-angular', () => {
         });
       $httpBackend.flush();
     });
+
+    it('should update an existing record', function () {
+      $httpBackend.expectPOST('/presidents/1', {
+        id: 1,
+        name: 'Donald'
+      }).respond({
+        id: 1,
+        name: 'Donald Trump'
+      });
+
+      president.id = 1;
+      president.name = 'Donald';
+      store.update(president)
+        .then((response) => {
+          expect(response).toEqual({
+            id: 1,
+            name: 'Donald Trump'
+          });
+        });
+      $httpBackend.flush();
+    });
+
+    it('should delete an existing record', function () {
+      $httpBackend.expectDELETE('/presidents/1', ).respond({});
+
+      president.id = 1;
+      president.name = 'Donald';
+      store.delete(president)
+        .then((response) => {
+          expect(response).toEqual({});
+        });
+      $httpBackend.flush();
+    });
   });
 
 });

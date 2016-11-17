@@ -24,6 +24,25 @@
           return response.data;
         });
       }
+
+      update(record: Dougal.Model) {
+        return $http({
+          method: 'POST',
+          url: record.url(),
+          data: record.serializer.format()
+        }).then((response) => {
+          return response.data;
+        });
+      }
+
+      delete(record: Dougal.Model) {
+        return $http({
+          method: 'DELETE',
+          url: record.url()
+        }).then((response) => {
+          return response.data;
+        });
+      }
     }
   }
 

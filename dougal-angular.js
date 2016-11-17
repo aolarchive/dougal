@@ -23,6 +23,23 @@
                     return response.data;
                 });
             };
+            $httpStore.prototype.update = function (record) {
+                return $http({
+                    method: 'POST',
+                    url: record.url(),
+                    data: record.serializer.format()
+                }).then(function (response) {
+                    return response.data;
+                });
+            };
+            $httpStore.prototype.delete = function (record) {
+                return $http({
+                    method: 'DELETE',
+                    url: record.url()
+                }).then(function (response) {
+                    return response.data;
+                });
+            };
             return $httpStore;
         }());
     }
