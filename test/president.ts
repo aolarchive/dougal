@@ -3,6 +3,7 @@
 /// <reference path="../lib/store.ts" />
 /// <reference path="../lib/validator.ts" />
 
+import Attribute = Dougal.Attribute;
 import Model = Dougal.Model;
 import Store = Dougal.Store;
 import Validator = Dougal.Validator;
@@ -45,14 +46,16 @@ class President extends Model {
   store = new LocalStore();
   urlRoot = '/presidents/{id}';
 
+  @Attribute
   id: number;
+  
   name: string;
+
+  @Attribute
   birthdate: Date;
 
   constructor() {
     super();
-
-    this.attribute('id');
 
     this.attribute('name', {
       set: function (name) {
@@ -66,7 +69,6 @@ class President extends Model {
     });
     this.validates('name', 'validatePresidentName');
 
-    this.attribute('birthdate');
     this.validates('birthdate', new BirthDateValidator({message: 'No babies allowed'}));
   }
 

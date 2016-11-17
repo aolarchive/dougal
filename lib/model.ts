@@ -18,7 +18,7 @@ namespace Dougal {
     urlRoot: string;
     validators: Validations.ValidatorResolver[] = [];
 
-    protected attribute(name: string, options: Attribute = {}) {
+    attribute(name: string, options: Attribute = {}) {
       if (options.get) {
         this.getters[name] = options.get;
       }
@@ -27,17 +27,10 @@ namespace Dougal {
         this.setters[name] = options.set;
       }
 
-      Object.defineProperty(this, name, {
-        get: () => {
-          return this.get(name);
-        },
-        set: (value) => {
-          this.set(name, value);
-        }
-      });
+      Attribute(this, name);
     }
 
-    public get(key): any {
+    get(key): any {
       if (this.getters[key]) {
         return this.getters[key].call(this);
       } else {
@@ -45,7 +38,7 @@ namespace Dougal {
       }
     }
 
-    public save(): Q.Promise<Model|Validations.ErrorHandler> {
+    save(): Q.Promise<Model|Validations.ErrorHandler> {
       this.validate();
       if (this.errors.any()) {
         return Q.reject(this.errors);
@@ -57,7 +50,7 @@ namespace Dougal {
         });
     }
 
-    public set(key, value) {
+    set(key, value) {
       if (this.setters[key]) {
         this.setters[key].call(this, value);
       } else {
@@ -66,7 +59,7 @@ namespace Dougal {
       this.validate();
     }
 
-    public url() {
+    url() {
       return new URITemplate(this.urlRoot).expand(this);
     }
 
@@ -78,14 +71,14 @@ namespace Dougal {
       return !this.errors.any();
     }
 
-    public validate() {
+    validate() {
       this.errors = new Validations.ErrorHandler(this);
       _.each(this.validators, (resolver: Validations.ValidatorResolver) => {
         resolver.run(this);
       });
     }
 
-    protected validates(...args: any[]) {
+    validates(...args: any[]) {
       this.validators.push(new Validations.ValidatorResolver(arguments));
     }
   }

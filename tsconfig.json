@@ -10,6 +10,7 @@
   },
   "files": [
     "lib/dougal.ts",
+    "lib/decorators/attribute.ts",
     "lib/decorators/extendable.ts",
     "lib/model.ts",
     "lib/store.ts",

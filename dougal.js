@@ -19,6 +19,21 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
+    function Attribute(prototype, attribute, options) {
+        Object.defineProperty(prototype, attribute, {
+            get: function () {
+                return this.get(attribute);
+            },
+            set: function (value) {
+                this.set(attribute, value);
+            }
+        });
+    }
+    Dougal.Attribute = Attribute;
+    ;
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
     function Extendable(BaseClass) {
         BaseClass.extends = function (constructor, prototype) {
             function Extended() {
@@ -45,7 +60,6 @@ var Dougal;
             this.validators = [];
         }
         Model.prototype.attribute = function (name, options) {
-            var _this = this;
             if (options === void 0) { options = {}; }
             if (options.get) {
                 this.getters[name] = options.get;
@@ -53,14 +67,7 @@ var Dougal;
             if (options.set) {
                 this.setters[name] = options.set;
             }
-            Object.defineProperty(this, name, {
-                get: function () {
-                    return _this.get(name);
-                },
-                set: function (value) {
-                    _this.set(name, value);
-                }
-            });
+            Dougal.Attribute(this, name);
         };
         Model.prototype.get = function (key) {
             if (this.getters[key]) {
