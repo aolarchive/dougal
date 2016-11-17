@@ -49,6 +49,7 @@ class President extends Model {
   @Attribute
   id: number;
   
+  @Attribute
   name: string;
 
   @Attribute
@@ -57,11 +58,6 @@ class President extends Model {
   constructor() {
     super();
 
-    this.attribute('name', {
-      set: function (name) {
-        this.attributes.name = (name || '').trim();
-      }
-    });
     this.validates('name', {
       presence: true,
       length: {minimum: 2},

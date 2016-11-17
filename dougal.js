@@ -54,28 +54,15 @@ var Dougal;
     var Model = (function () {
         function Model() {
             this.attributes = {};
-            this.getters = {};
-            this.setters = {};
+            this.changed = {};
             this.serializer = new Dougal.Serializer(this);
             this.validators = [];
         }
-        Model.prototype.attribute = function (name, options) {
-            if (options === void 0) { options = {}; }
-            if (options.get) {
-                this.getters[name] = options.get;
-            }
-            if (options.set) {
-                this.setters[name] = options.set;
-            }
+        Model.prototype.attribute = function (name) {
             Dougal.Attribute(this, name);
         };
         Model.prototype.get = function (key) {
-            if (this.getters[key]) {
-                return this.getters[key].call(this);
-            }
-            else {
-                return _.get(this.attributes, key);
-            }
+            return _.get(this.attributes, key);
         };
         Model.prototype.save = function () {
             var _this = this;
@@ -90,12 +77,8 @@ var Dougal;
             });
         };
         Model.prototype.set = function (key, value) {
-            if (this.setters[key]) {
-                this.setters[key].call(this, value);
-            }
-            else {
-                _.set(this.attributes, key, value);
-            }
+            _.set(this.attributes, key, value);
+            _.set(this.changed, key, value);
             this.validate();
         };
         Model.prototype.url = function () {

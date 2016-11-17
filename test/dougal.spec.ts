@@ -5,12 +5,11 @@ describe('dougal', function () {
     expect(donald instanceof Dougal.Model).toBe(true);
     expect(donald.valid).toBe(false);
     expect(donald.errors.name).toEqual(['Name is required', 'Donald is the president!']);
-    donald.name = ' hillary ';
-    expect(donald.name).toEqual('hillary');
+    donald.name = 'hillary';
     expect(donald.valid).toBe(false);
     expect(donald.errors.name).toEqual(['Donald is the president!']);
     expect(donald.isPresident()).toBe(false);
-    donald.name = 'donald ';
+    donald.name = 'donald';
     expect(donald.isPresident()).toBe(true);
     expect(donald.errors.name).toEqual([]);
 
