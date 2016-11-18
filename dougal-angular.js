@@ -49,4 +49,4 @@
         .run(['Dougal', '$q', function (Dougal, $q) {
             Dougal.Q = $q;
         }]);
-})(window.angular, window.Dougal);
+})(window['angular'], window['Dougal']);

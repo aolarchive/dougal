@@ -53,4 +53,4 @@
       Dougal.Q = $q;
     }]);
 
-})(window.angular, window.Dougal);
+})(window['angular'], window['Dougal']);

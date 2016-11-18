@@ -52,11 +52,14 @@ var Dougal;
 var Dougal;
 (function (Dougal) {
     var Model = (function () {
-        function Model() {
+        function Model(attributes) {
             this.attributes = {};
             this.changed = {};
+            this.errors = new Dougal.Validations.ErrorHandler(this);
+            this.idAttribute = 'id';
             this.serializer = new Dougal.Serializer(this);
             this.validators = [];
+            this.set(attributes, { silent: true });
         }
         Model.prototype.attribute = function (name) {
             Dougal.Attribute(this, name);
@@ -64,37 +67,56 @@ var Dougal;
         Model.prototype.get = function (key) {
             return _.get(this.attributes, key);
         };
+        Model.prototype.has = function (key) {
+            return _.has(this.attributes, key);
+        };
+        Model.prototype.isNew = function () {
+            return !this.has(this.idAttribute);
+        };
+        Model.prototype.isValid = function () {
+            return !this.errors.any();
+        };
         Model.prototype.save = function () {
             var _this = this;
             this.validate();
             if (this.errors.any()) {
                 return Dougal.Q.reject(this.errors);
             }
-            return this.store.create(this)
+            return (this.isNew() ? this.store.create(this) : this.store.update(this))
                 .then(function (response) {
-                _.assign(_this.attributes, _this.serializer.parse(response));
-                return _this;
+                _this.set(_this.serializer.parse(response));
+                _this.changed = {};
+                return response;
             });
         };
-        Model.prototype.set = function (key, value) {
-            _.set(this.attributes, key, value);
-            _.set(this.changed, key, value);
-            this.validate();
+        Model.prototype.set = function () {
+            var _this = this;
+            var changes = {};
+            var options;
+            if (_.isString(arguments[0])) {
+                changes[arguments[0]] = arguments[1];
+                options = arguments[2];
+            }
+            else {
+                changes = arguments[0] || {};
+                options = arguments[1];
+            }
+            options = _.defaults(options, {
+                silent: false
+            });
+            _.each(changes, function (value, key) {
+                _.set(_this.attributes, key, value);
+                if (!options.silent) {
+                    _.set(_this.changed, key, value);
+                }
+            });
+            if (!options.silent) {
+                this.validate();
+            }
         };
         Model.prototype.url = function () {
             return new URITemplate(this.urlRoot).expand(this);
         };
-        Object.defineProperty(Model.prototype, "valid", {
-            get: function () {
-                if (!this.errors) {
-                    this.errors = new Dougal.Validations.ErrorHandler(this);
-                    this.validate();
-                }
-                return !this.errors.any();
-            },
-            enumerable: true,
-            configurable: true
-        });
         Model.prototype.validate = function () {
             var _this = this;
             this.errors = new Dougal.Validations.ErrorHandler(this);
@@ -103,11 +125,8 @@ var Dougal;
             });
         };
         Model.prototype.validates = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
             this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
+            this.validate();
         };
         Model = __decorate([
             Dougal.Extendable
@@ -225,7 +244,7 @@ var Dougal;
             };
             ValidatorResolver.prototype.run = function (record) {
                 if (this.attribute) {
-                    this.validator.validate(record, this.attribute, _.get(record, this.attribute));
+                    this.validator.validate(record, this.attribute, record.get(this.attribute));
                 }
             };
             return ValidatorResolver;

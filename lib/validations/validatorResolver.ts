@@ -66,7 +66,7 @@ namespace Dougal.Validations {
 
     run(record) {
       if (this.attribute) {
-        this.validator.validate(record, this.attribute, _.get(record, this.attribute));
+        this.validator.validate(record, this.attribute, record.get(this.attribute));
       }
     }
   }

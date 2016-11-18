@@ -1,63 +1,101 @@
 namespace Dougal {
 
+  interface ISetOptions {
+    silent?: boolean
+  }
+
   @Extendable
   export abstract class Model {
-
     attributes: any = {};
     changed: any = {};
-    errors: Validations.ErrorHandler;
+    errors: Validations.ErrorHandler = new Validations.ErrorHandler(this);
+    idAttribute: string = 'id';
     serializer = new Serializer(this);
     store: Store;
     urlRoot: string;
     validators: Validations.ValidatorResolver[] = [];
 
-    attribute(name: string) {
+    constructor(attributes?: Object) {
+      this.set(attributes, {silent: true});
+    }
+
+    attribute(name: string): void {
       Attribute(this, name);
     }
 
-    get(key): any {
+    get(key: string): any {
       return _.get(this.attributes, key);
     }
 
-    save(): Q.Promise<Model|Validations.ErrorHandler> {
+    has(key: string): boolean {
+      return _.has(this.attributes, key);
+    }
+
+    isNew(): boolean {
+      return !this.has(this.idAttribute);
+    }
+
+    isValid(): boolean {
+      return !this.errors.any();
+    }
+
+    save(): Q.Promise<any> {
       this.validate();
       if (this.errors.any()) {
         return Q.reject(this.errors);
       }
-      return this.store.create(this)
+      return (this.isNew() ? this.store.create(this) : this.store.update(this))
         .then((response) => {
-          _.assign(this.attributes, this.serializer.parse(response));
-          return this;
+          this.set(this.serializer.parse(response));
+          this.changed = {};
+          return response;
         });
     }
 
-    set(key, value) {
-      _.set(this.attributes, key, value);
-      _.set(this.changed, key, value);
-      this.validate();
+    set(attributes: Object, options?: ISetOptions): void;
+    set(key: string, value: any, options?: ISetOptions): void;
+    set(): void {
+      let changes = {};
+      let options;
+      if (_.isString(arguments[0])) {
+        changes[arguments[0]] = arguments[1];
+        options = arguments[2];
+      } else {
+        changes = arguments[0] || {};
+        options = arguments[1];
+      }
+      
+      options = _.defaults(options, {
+        silent: false
+      });
+      _.each(changes, (value, key) => {
+        _.set(this.attributes, key, value);
+        if (!options.silent) {
+          _.set(this.changed, key, value);
+        }
+      });
+      if (!options.silent){
+        this.validate();
+      }
     }
 
-    url() {
+    url(): string {
       return new URITemplate(this.urlRoot).expand(this);
     }
 
-    get valid() {
-      if (!this.errors) {
-        this.errors = new Validations.ErrorHandler(this);
-        this.validate();
-      }
-      return !this.errors.any();
-    }
-
-    validate() {
+    validate(): void {
       this.errors = new Validations.ErrorHandler(this);
       _.each(this.validators, (resolver: Validations.ValidatorResolver) => {
         resolver.run(this);
       });
     }
 
-    validates(...args: any[]) {
+    validates(attribute: string, method: string): void;
+    validates(attribute: string, validator: Validator): void;
+    validates(attribute: string, options: Object): void;
+    validates(): void {
       this.validators.push(new Validations.ValidatorResolver(arguments));
+      this.validate();
     }
   }
 }

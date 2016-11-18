@@ -1,5 +1,5 @@
 namespace Dougal {
-  export function Attribute(prototype, attribute: string, options: any) {
+  export function Attribute(prototype, attribute: string, options?: any): void {
     Object.defineProperty(prototype, attribute, {
       get: function () {
         return this.get(attribute);

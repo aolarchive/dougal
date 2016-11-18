@@ -55,8 +55,8 @@ class President extends Model {
   @Attribute
   birthdate: Date;
 
-  constructor() {
-    super();
+  constructor(attributes?: any) {
+    super(attributes);
 
     this.validates('name', {
       presence: true,
