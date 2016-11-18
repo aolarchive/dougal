@@ -80,7 +80,16 @@ namespace Dougal {
     }
 
     url(): string {
-      return new URITemplate(this.urlRoot).expand(this);
+      let baseUrl = _.template(this.urlRoot, {
+        interpolate: Dougal.URL_INTERPOLATION
+      })(this.attributes);
+
+      if (this.isNew()) {
+        return baseUrl;
+      } else {
+        let id = this.get(this.idAttribute);
+        return baseUrl.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
+      }
     }
 
     validate(): void {

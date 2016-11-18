@@ -31,7 +31,7 @@ describe('dougal-angular', () => {
     });
 
     it('should create a new record', () => {
-      $httpBackend.expectPOST('/presidents/', {
+      $httpBackend.expectPOST('/presidents', {
         name: 'Donald'
       }).respond({
         id: 1,

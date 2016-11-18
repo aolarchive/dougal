@@ -44,7 +44,7 @@ class LocalStore implements Store {
 
 class President extends Model {
   store = new LocalStore();
-  urlRoot = '/presidents/{id}';
+  urlRoot = '/presidents';
 
   @Attribute
   id: number;

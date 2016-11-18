@@ -12,10 +12,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /// <reference types="lodash" />
 /// <reference types="q" />
-/// <reference types="urijs" />
 var Dougal;
 (function (Dougal) {
     Dougal.Q = window['Q'];
+    Dougal.URL_INTERPOLATION = /:(\w+)/g;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -115,7 +115,16 @@ var Dougal;
             }
         };
         Model.prototype.url = function () {
-            return new URITemplate(this.urlRoot).expand(this);
+            var baseUrl = _.template(this.urlRoot, {
+                interpolate: Dougal.URL_INTERPOLATION
+            })(this.attributes);
+            if (this.isNew()) {
+                return baseUrl;
+            }
+            else {
+                var id = this.get(this.idAttribute);
+                return baseUrl.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
+            }
         };
         Model.prototype.validate = function () {
             var _this = this;

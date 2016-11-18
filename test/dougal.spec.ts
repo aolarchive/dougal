@@ -20,6 +20,7 @@ describe('dougal', function () {
     donald.birthdate = new Date(new Date().getTime() + 1000);
     expect(donald.errors.birthdate).toEqual([]);
     expect(donald.isValid()).toBe(true);
+    expect(donald.url()).toEqual('/presidents');
 
     expect(donald.changed.name).toEqual('donald');
     expect(donald.isNew()).toBe(true);
@@ -30,6 +31,7 @@ describe('dougal', function () {
         expect(donald.id).toEqual('1');
         expect(donald.changed).toEqual({});
         expect(donald.isNew()).toBe(false);
+        expect(donald.url()).toEqual('/presidents/1');
       })
       .finally(done);
   });

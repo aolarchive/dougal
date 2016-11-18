@@ -19,8 +19,6 @@ module.exports = function(config) {
     files: [
       'node_modules/q/q.js',
       'node_modules/lodash/lodash.js',
-      'node_modules/urijs/src/URI.js',
-      'node_modules/urijs/src/URITemplate.js',
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js'
     ]
