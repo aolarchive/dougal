@@ -6,7 +6,8 @@
     "sourceMap": false,
     "experimentalDecorators": true,
     "baseUrl": "lib",
-    "outFile": "dougal.js"
+    "outFile": "dougal.js",
+    "removeComments": true
   },
   "files": [
     "lib/dougal.ts",

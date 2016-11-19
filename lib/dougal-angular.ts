@@ -49,7 +49,8 @@
   angular.module('dougal', [])
     .constant('Dougal', Dougal)
     .factory('$httpStore', ['Dougal', '$http', $httpStoreFactory])
-    .run(['Dougal', '$q', (Dougal, $q) => {
+    .run(['Dougal', '$httpStore', '$q', (Dougal, $httpStore, $q) => {
+      Dougal.defaultStore = new $httpStore();
       Dougal.Q = $q;
     }]);
 

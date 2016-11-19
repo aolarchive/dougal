@@ -10,12 +10,8 @@ namespace Dougal {
       };
     }
 
-    options: any;
+    constructor(private options = {}) {}
 
-    constructor(options?) {
-      this.options = options || {};
-    }
-
-    abstract validate(record: any, attribute?: string, value?: any);
+    abstract validate(record: any, attribute?: string, value?: any)
   }
 }

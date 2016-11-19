@@ -48,7 +48,7 @@ class President extends Model {
 
   @Attribute
   id: number;
-  
+
   @Attribute
   name: string;
 

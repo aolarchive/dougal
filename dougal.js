@@ -10,10 +10,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference types="lodash" />
-/// <reference types="q" />
 var Dougal;
 (function (Dougal) {
+    Dougal.defaultStore = undefined;
     Dougal.Q = window['Q'];
     Dougal.URL_INTERPOLATION = /:(\w+)/g;
 })(Dougal || (Dougal = {}));
@@ -58,6 +57,7 @@ var Dougal;
             this.errors = new Dougal.Validations.ErrorHandler(this);
             this.idAttribute = 'id';
             this.serializer = new Dougal.Serializer(this);
+            this.store = Dougal.defaultStore;
             this.validators = [];
             this.set(attributes, { silent: true });
         }
@@ -167,7 +167,8 @@ var Dougal;
 (function (Dougal) {
     var Validator = (function () {
         function Validator(options) {
-            this.options = options || {};
+            if (options === void 0) { options = {}; }
+            this.options = options;
         }
         Validator.simple = function (validate) {
             return (function (_super) {

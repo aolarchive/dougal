@@ -11,7 +11,7 @@ namespace Dougal {
     errors: Validations.ErrorHandler = new Validations.ErrorHandler(this);
     idAttribute: string = 'id';
     serializer = new Serializer(this);
-    store: Store;
+    store: Store = defaultStore;
     urlRoot: string;
     validators: Validations.ValidatorResolver[] = [];
 

@@ -1,7 +1,5 @@
 (function (angular, Dougal) {
     'use strict';
-    /// <reference types="angular" />
-    /// <reference path="./store.ts" />
     function $httpStoreFactory(Dougal, $http) {
         return (function () {
             function $httpStore() {
@@ -46,7 +44,8 @@
     angular.module('dougal', [])
         .constant('Dougal', Dougal)
         .factory('$httpStore', ['Dougal', '$http', $httpStoreFactory])
-        .run(['Dougal', '$q', function (Dougal, $q) {
+        .run(['Dougal', '$httpStore', '$q', function (Dougal, $httpStore, $q) {
+            Dougal.defaultStore = new $httpStore();
             Dougal.Q = $q;
         }]);
 })(window['angular'], window['Dougal']);
