@@ -54,6 +54,10 @@ class President extends Model {
     return Model.all(President) as Q.Promise<President[]>;
   }
 
+  static find(id: any): Q.Promise<President> {
+    return Model.find(id, President) as Q.Promise<President>;
+  }
+
   store = new LocalStore();
   urlRoot = '/presidents';
 

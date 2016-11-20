@@ -29,7 +29,24 @@ namespace Dougal {
         return Model.all(ExtendedModel);
       };
 
+      ExtendedModel.find = function (id) {
+        return Model.find(id, ExtendedModel);
+      };
+
       return ExtendedModel;
+    }
+
+    protected static find(id: any, ExtendedModel): Q.Promise<Model> {
+      let model: Model = new ExtendedModel();
+      model.set(model.idAttribute, id, {silent: true});
+      return model.store.read(model)
+        .then((data) => {
+          if (data) {
+            model.set(data, {silent: true});
+            return model;
+          }
+          throw new Error('Record Not Found');
+        });
     }
 
     attributes: any = {};

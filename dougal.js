@@ -80,7 +80,22 @@ var Dougal;
             ExtendedModel.all = function () {
                 return Model.all(ExtendedModel);
             };
+            ExtendedModel.find = function (id) {
+                return Model.find(id, ExtendedModel);
+            };
             return ExtendedModel;
+        };
+        Model.find = function (id, ExtendedModel) {
+            var model = new ExtendedModel();
+            model.set(model.idAttribute, id, { silent: true });
+            return model.store.read(model)
+                .then(function (data) {
+                if (data) {
+                    model.set(data, { silent: true });
+                    return model;
+                }
+                throw new Error('Record Not Found');
+            });
         };
         Model.prototype.attribute = function (name) {
             Dougal.Attribute(this, name);
@@ -369,7 +384,7 @@ var Dougal;
                 _super.apply(this, arguments);
             }
             PresenceValidator.prototype.validate = function (record, attribute, value) {
-                if (this.options.presence && _.isEmpty(value)) {
+                if (this.options.presence && (_.isNil(value) || value === '')) {
                     record.errors.add(attribute, this.options.message);
                 }
             };
