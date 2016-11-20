@@ -1,3 +1,6 @@
+/// <reference path="../../lib/model.ts" />
+/// <reference path="../../lib/validations/length.ts" />
+
 describe('Dougal.Validations.LengthValidator', () => {
   type LengthValidator = Dougal.Validations.LengthValidator;
   const LengthValidator = Dougal.Validations.LengthValidator;
@@ -27,12 +30,12 @@ describe('Dougal.Validations.LengthValidator', () => {
   it('should only allow a fixed string length', () => {
     options.length.is = 2;
     model.value = '';
-    expect(model.errors.value).toEqual(['error']);
+    expect(model.errors.messages.value).toEqual(['error']);
     
     model.value = 'te';
-    expect(model.errors.value).toEqual([]);
+    expect(model.errors.messages.value).toEqual([]);
     
     model.value = 'test';
-    expect(model.errors.value).toEqual(['error']);
+    expect(model.errors.messages.value).toEqual(['error']);
   });
 });

@@ -14,6 +14,7 @@ namespace Dougal {
   }
 
   export interface Store {
+    list(url: string, args?: any): Q.Promise<Array<any>>
     create(record: Model): Q.Promise<any>
     read(record: Model): Q.Promise<any>
     update(record: Model): Q.Promise<any>

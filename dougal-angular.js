@@ -4,6 +4,15 @@
         return (function () {
             function $httpStore() {
             }
+            $httpStore.prototype.list = function (url, args) {
+                return $http({
+                    method: 'GET',
+                    url: url,
+                    params: args
+                }).then(function (response) {
+                    return response.data;
+                });
+            };
             $httpStore.prototype.create = function (record) {
                 return $http({
                     method: 'POST',

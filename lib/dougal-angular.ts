@@ -6,6 +6,16 @@
 
   function $httpStoreFactory(Dougal, $http) {
     return class $httpStore implements Dougal.Store {
+      list(url: string, args: any) {
+        return $http({
+          method: 'GET',
+          url: url,
+          params: args
+        }).then((response) => {
+          return response.data;
+        });
+      }
+
       create(record: Dougal.Model) {
         return $http({
           method: 'POST',

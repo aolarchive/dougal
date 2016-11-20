@@ -4,8 +4,34 @@ namespace Dougal {
     silent?: boolean
   }
 
-  @Extendable
   export abstract class Model {
+    protected static all(ExtendedModel): Q.Promise<Model[]> {
+      let model: Model = new ExtendedModel();
+      return model.store.list(model.urlRoot)
+        .then((models) => {
+          return _.map(models, (model) => {
+            return new ExtendedModel(model);
+          });
+        });
+    }
+
+    static extends(constructor: Function) {
+      let ExtendedModel: any = function ExtendedModel() {
+        Model.apply(this, arguments);
+        constructor.apply(this, arguments);
+      }
+
+      ExtendedModel.prototype = Object.create(Model.prototype, {
+        constructor: ExtendedModel
+      });
+
+      ExtendedModel.all = function () {
+        return Model.all(ExtendedModel);
+      };
+
+      return ExtendedModel;
+    }
+
     attributes: any = {};
     changed: any = {};
     errors: Validations.ErrorHandler = new Validations.ErrorHandler(this);
@@ -29,6 +55,10 @@ namespace Dougal {
 
     has(key: string): boolean {
       return _.has(this.attributes, key);
+    }
+
+    get id() {
+      return this.attribute[this.idAttribute];
     }
 
     isNew(): boolean {

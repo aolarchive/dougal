@@ -10,7 +10,7 @@ namespace Dougal {
       };
     }
 
-    constructor(private options = {}) {}
+    constructor(protected options: any = {}) {}
 
     abstract validate(record: any, attribute?: string, value?: any)
   }

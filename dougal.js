@@ -34,7 +34,7 @@ var Dougal;
 var Dougal;
 (function (Dougal) {
     function Extendable(BaseClass) {
-        BaseClass.extends = function (constructor, prototype) {
+        BaseClass.extends = function (constructor) {
             function Extended() {
                 BaseClass.apply(this, arguments);
                 constructor.apply(this, arguments);
@@ -42,7 +42,6 @@ var Dougal;
             Extended.prototype = Object.create(BaseClass.prototype, {
                 constructor: Extended
             });
-            _.assign(Extended.prototype, prototype);
             return Extended;
         };
     }
@@ -61,6 +60,28 @@ var Dougal;
             this.validators = [];
             this.set(attributes, { silent: true });
         }
+        Model.all = function (ExtendedModel) {
+            var model = new ExtendedModel();
+            return model.store.list(model.urlRoot)
+                .then(function (models) {
+                return _.map(models, function (model) {
+                    return new ExtendedModel(model);
+                });
+            });
+        };
+        Model.extends = function (constructor) {
+            var ExtendedModel = function ExtendedModel() {
+                Model.apply(this, arguments);
+                constructor.apply(this, arguments);
+            };
+            ExtendedModel.prototype = Object.create(Model.prototype, {
+                constructor: ExtendedModel
+            });
+            ExtendedModel.all = function () {
+                return Model.all(ExtendedModel);
+            };
+            return ExtendedModel;
+        };
         Model.prototype.attribute = function (name) {
             Dougal.Attribute(this, name);
         };
@@ -70,6 +91,13 @@ var Dougal;
         Model.prototype.has = function (key) {
             return _.has(this.attributes, key);
         };
+        Object.defineProperty(Model.prototype, "id", {
+            get: function () {
+                return this.attribute[this.idAttribute];
+            },
+            enumerable: true,
+            configurable: true
+        });
         Model.prototype.isNew = function () {
             return !this.has(this.idAttribute);
         };
@@ -137,9 +165,6 @@ var Dougal;
             this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
             this.validate();
         };
-        Model = __decorate([
-            Dougal.Extendable
-        ], Model);
         return Model;
     }());
     Dougal.Model = Model;

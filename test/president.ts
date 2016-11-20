@@ -1,4 +1,5 @@
 /// <reference types="jasmine" />
+/// <reference path="../lib/decorators/attribute.ts" />
 /// <reference path="../lib/model.ts" />
 /// <reference path="../lib/store.ts" />
 /// <reference path="../lib/validator.ts" />
@@ -17,32 +18,42 @@ class BirthDateValidator extends Validator {
 }
 
 class LocalStore implements Store {
+  static items = [];
+
+  list() {
+    return Q.when(LocalStore.items);
+  }
 
   create(record): Q.Promise<any> {
     record.id = _.uniqueId();
-    let id = _.uniqueId();
     let object = record.serializer.format();
-    localStorage.setItem(record.url(), JSON.stringify(object));
+    LocalStore.items.push(object);
     return this.read(record);
   }
 
-  read(record): Q.Promise<any> {
-    return Q.when(JSON.parse(localStorage.getItem(record.url())));
+  read(record: Model): Q.Promise<any> {
+    return Q.when(_.find(LocalStore.items, [record.idAttribute, record.id]));
   }
 
   update(record): Q.Promise<any> {
     let object = record.serializer.format();
-    localStorage.setItem(record.url(), JSON.stringify(object));
+    let index = _.findIndex(LocalStore.items, [record.idAttribute, record.id]);
+    LocalStore.items.splice(index, 1, object);
     return Q.when(object);
   }
 
   delete(record): Q.Promise<any> {
-    _.set(localStorage, record.url(), '');
+    _.remove(LocalStore.items, [record.idAttribute, record.id]);
     return Q.when({});
   }
 }
 
 class President extends Model {
+  // JS generator provides this static function
+  static all(): Q.Promise<President[]> {
+    return Model.all(President) as Q.Promise<President[]>;
+  }
+
   store = new LocalStore();
   urlRoot = '/presidents';
 
