@@ -37,7 +37,7 @@
 
       update(record: Dougal.Model) {
         return $http({
-          method: 'POST',
+          method: 'PUT',
           url: record.url(),
           data: record.serializer.format()
         }).then((response) => {

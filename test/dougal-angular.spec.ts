@@ -64,7 +64,7 @@ describe('dougal-angular', () => {
     });
 
     it('should update an existing record', function () {
-      $httpBackend.expectPOST('/presidents/1', {
+      $httpBackend.expectPUT('/presidents/1', {
         id: 1,
         name: 'Donald'
       }).respond({
