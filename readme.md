@@ -7,6 +7,7 @@ The M of MVC, for Javascript VC frameworks that lack a decent M.
 ## Getting Started
 
 Install Dougal:
+
 ```
 $ npm install manudwarf/dougal
 ```
@@ -15,9 +16,10 @@ $ npm install manudwarf/dougal
 ```
 
 Define models:
+
 ```javascript
-var President = Dougal.Model.extends(function () {
-  this.baseUrl = '/presidents';
+var Employee = Dougal.Model.extends(function () {
+  this.baseUrl = '/employees';
 
   this.attribute('id');
   this.attribute('name');
@@ -27,22 +29,25 @@ var President = Dougal.Model.extends(function () {
 ```
 
 Create a new record:
+
 ```javascript
-var potus = new President({name: 'Donald Trump'});
+var newHire = new Employee({name: 'John Doe'});
 ```
 
 Validate the record:
+
 ```javascript
-potus.isValid(); // true
-potus.name = '';
-potus.isValid(); // false
-potus.errors.name; // ['Name is required'];
+newHire.isValid(); // true
+newHire.name = '';
+newHire.isValid(); // false
+newHire.errors.name; // ['Name is required'];
 ```
 
 Save the record:
+
 ```javascript
-potus.save();
-// POST /presidents {name: 'Donald Trump'}
+newHire.save();
+// POST /employees {name: 'John Doe'}
 ```
 
 ### Angular.js integration
@@ -53,13 +58,13 @@ potus.save();
 
 ```javascript
 angular.module('your.app', ['dougal'])
-  .factory('President', ['Dougal', function (Dougal) {
-    function President() {
+  .factory('Employee', ['Dougal', function (Dougal) {
+    function Employee() {
       // Model definition here
     }
-    return Dougal.Model.extends(President);
+    return Dougal.Model.extends(Employee);
   }])
-  .controller('YourController', function (President) {
-    this.president = new President();
+  .controller('YourController', function (Employee) {
+    this.employee = new Employee();
   });
 ```

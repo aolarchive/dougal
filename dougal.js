@@ -119,11 +119,16 @@ var Dougal;
         Model.prototype.isValid = function () {
             return !this.errors.any();
         };
-        Model.prototype.save = function () {
+        Model.prototype.save = function (options) {
             var _this = this;
-            this.validate();
-            if (this.errors.any()) {
-                return Dougal.Q.reject(this.errors);
+            options = _.defaults(options, {
+                validate: true
+            });
+            if (options.validate) {
+                this.validate();
+                if (this.errors.any()) {
+                    return Dougal.Q.reject(this.errors);
+                }
             }
             return (this.isNew() ? this.store.create(this) : this.store.update(this))
                 .then(function (response) {

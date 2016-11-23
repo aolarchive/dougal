@@ -1,5 +1,9 @@
 namespace Dougal {
 
+  interface ISaveOptions {
+    validate?: boolean
+  }
+
   interface ISetOptions {
     silent?: boolean
   }
@@ -86,10 +90,15 @@ namespace Dougal {
       return !this.errors.any();
     }
 
-    save(): Q.Promise<any> {
-      this.validate();
-      if (this.errors.any()) {
-        return Q.reject(this.errors);
+    save(options: ISaveOptions): Q.Promise<any> {
+      options = _.defaults(options, {
+        validate: true
+      });
+      if (options.validate) {
+        this.validate();
+        if (this.errors.any()) {
+          return Q.reject(this.errors);
+        }
       }
       return (this.isNew() ? this.store.create(this) : this.store.update(this))
         .then((response) => {

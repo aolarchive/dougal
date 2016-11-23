@@ -46,4 +46,29 @@ describe('Dougal.Model', () => {
       });
     });
   });
+
+  describe('methods', () => {
+    let president: President;
+    beforeEach(() => {
+      president = new President();
+    });
+
+    describe('save', () => {
+      xit('should reject if validations fail', (done) => {
+        president.save()
+          .catch((errors) => {
+            expect(errors.name).toEqual(['feck']);
+          })
+          .finally(done);
+      }).pend('need Q/angular.$q abstraction');
+
+      it('should allow to skip validation', () => {
+        spyOn(president.store, 'create').and.returnValue(Q.when());
+        spyOn(president, 'validate');
+        president.save({validate: false});
+        expect(president.store.create).toHaveBeenCalled();
+        expect(president.validate).not.toHaveBeenCalled();
+      });
+    });
+  });
 });
