@@ -5,20 +5,11 @@
     "noImplicitAny": false,
     "sourceMap": false,
     "experimentalDecorators": true,
-    "baseUrl": "lib",
     "outFile": "dougal.js",
     "removeComments": true
   },
-  "files": [
-    "lib/dougal.ts",
-    "lib/decorators/attribute.ts",
-    "lib/decorators/extendable.ts",
-    "lib/model.ts",
-    "lib/store.ts",
-    "lib/validator.ts",
-    "lib/validations/validatorResolver.ts",
-    "lib/validations/errorHandler.ts",
-    "lib/validations/length.ts",
-    "lib/validations/presence.ts"
+  "include": [
+    "lib/**/*.ts",
+    "test/**/*.ts"
   ]
 }

@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Thu Nov 10 2016 23:48:44 GMT+0000 (GMT Standard Time)
 
-const tsconfig = require('./tsconfig.json');
+const files = require('./files.json');
 
 module.exports = function(config) {
   config.set({
@@ -22,7 +22,7 @@ module.exports = function(config) {
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js'
     ]
-    .concat(tsconfig.files)
+    .concat(files)
     .concat([
       'test/**/*.ts',
       'lib/dougal-angular.ts'
