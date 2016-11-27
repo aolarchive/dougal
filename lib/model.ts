@@ -55,7 +55,7 @@ namespace Dougal {
             model.set(data, {silent: true});
             return model;
           }
-          throw new Error('Record Not Found');
+          return q.reject('Record Not Found');
         });
     }
 
@@ -103,7 +103,7 @@ namespace Dougal {
       if (options.validate) {
         this.validate();
         if (this.errors.any()) {
-          return Q.reject(this.errors);
+          return q.reject(this.errors);
         }
       }
       return (this.isNew() ? this.store.create(this) : this.store.update(this))

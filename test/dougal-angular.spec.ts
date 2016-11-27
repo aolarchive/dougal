@@ -11,12 +11,11 @@ namespace Dougal.Tests.Angular {
 
     it('should provide Dougal as a constant', inject(($q) => {
       expect(Dougal).toBe(window['Dougal']);
-      expect(Dougal.Q).toBe($q);
+      expect(Dougal.q).toBe($q);
     }));
 
     describe('$httpStore', () => {
       let employee;
-      // let employee;
       let store;
       let $httpBackend;
 

@@ -13,8 +13,36 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Dougal;
 (function (Dougal) {
     Dougal.defaultStore = undefined;
-    Dougal.Q = window['Q'];
     Dougal.URL_INTERPOLATION = /:(\w+)/g;
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
+    var Q = window['Q'];
+    function q(promise) {
+        var deferred = Q.defer();
+        promise(deferred.resolve, deferred.reject);
+        return deferred.promise;
+    }
+    Dougal.q = q;
+    ;
+    var q;
+    (function (q) {
+        function reject(error) {
+            var deferred = Q.defer();
+            deferred.reject(error);
+            return deferred.promise;
+        }
+        q.reject = reject;
+        ;
+        function when(value) {
+            var deferred = Q.defer();
+            deferred.resolve(value);
+            return deferred.promise;
+        }
+        q.when = when;
+        ;
+    })(q = Dougal.q || (Dougal.q = {}));
+    ;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -94,7 +122,7 @@ var Dougal;
                     model.set(data, { silent: true });
                     return model;
                 }
-                throw new Error('Record Not Found');
+                return Dougal.q.reject('Record Not Found');
             });
         };
         Model.prototype.attribute = function (name) {
@@ -127,7 +155,7 @@ var Dougal;
             if (options.validate) {
                 this.validate();
                 if (this.errors.any()) {
-                    return Dougal.Q.reject(this.errors);
+                    return Dougal.q.reject(this.errors);
                 }
             }
             return (this.isNew() ? this.store.create(this) : this.store.update(this))

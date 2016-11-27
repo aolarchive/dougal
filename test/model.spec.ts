@@ -41,7 +41,7 @@ namespace Dougal.Tests {
               fail('it should reject the promise');
             })
             .catch((error) => {
-              expect(error).toEqual(new Error('Record Not Found'));
+              expect(error).toEqual('Record Not Found');
             })
             .finally(done);
         });
@@ -55,16 +55,16 @@ namespace Dougal.Tests {
       });
 
       describe('save', () => {
-        xit('should reject if validations fail', (done) => {
+        it('should reject if validations fail', (done) => {
           employee.save()
             .catch((errors) => {
-              expect(errors.name).toEqual(['something']);
+              expect(errors.name).toEqual(['Name is required']);
             })
             .finally(done);
-        }).pend('need Q/angular.$q abstraction');
+        });
 
         it('should allow to skip validation', () => {
-          spyOn(employee.store, 'create').and.returnValue(Q.when());
+          spyOn(employee.store, 'create').and.returnValue(q.when());
           spyOn(employee, 'validate');
           employee.save({validate: false});
           expect(employee.store.create).toHaveBeenCalled();
