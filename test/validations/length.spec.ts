@@ -1,41 +1,37 @@
-/// <reference path="../../lib/model.ts" />
-/// <reference path="../../lib/validations/length.ts" />
+namespace Dougal.Tests {
+  describe('Dougal.Validations.LengthValidator', () => {
+    let model: SampleModel;
+    let options: any = {length: {}, message: 'error'};
+    let length = new Validations.LengthValidator(options);
 
-describe('Dougal.Validations.LengthValidator', () => {
-  type LengthValidator = Dougal.Validations.LengthValidator;
-  const LengthValidator = Dougal.Validations.LengthValidator;
+    class SampleModel extends Dougal.Model {
+      value: string;
 
-  let model: SampleModel;
-  let options: any = {length: {}, message: 'error'};
-  let length = new LengthValidator(options);
-
-  class SampleModel extends Dougal.Model {
-    value: string;
-
-    constructor() {
-      super();
-      this.attribute('value');
-      this.validates('value', length);
+      constructor() {
+        super();
+        this.attribute('value');
+        this.validates('value', length);
+      }
     }
-  }
 
-  beforeEach(() => {
-    model = new SampleModel();
-  });
+    beforeEach(() => {
+      model = new SampleModel();
+    });
 
-  it('should be defined', () => {
-    expect(length).toBeDefined();
-  });
+    it('should be defined', () => {
+      expect(length).toBeDefined();
+    });
 
-  it('should only allow a fixed string length', () => {
-    options.length.is = 2;
-    model.value = '';
-    expect(model.errors.messages.value).toEqual(['error']);
-    
-    model.value = 'te';
-    expect(model.errors.messages.value).toEqual([]);
-    
-    model.value = 'test';
-    expect(model.errors.messages.value).toEqual(['error']);
+    it('should only allow a fixed string length', () => {
+      options.length.is = 2;
+      model.value = '';
+      expect(model.errors.messages.value).toEqual(['error']);
+      
+      model.value = 'te';
+      expect(model.errors.messages.value).toEqual([]);
+      
+      model.value = 'test';
+      expect(model.errors.messages.value).toEqual(['error']);
+    });
   });
-});
+}

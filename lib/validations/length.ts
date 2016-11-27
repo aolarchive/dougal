@@ -1,8 +1,8 @@
 namespace Dougal.Validations {
-  interface ILengthOptions {
+  export interface ILengthOptions {
     minimum?: number,
     maximum?: number,
-    is: number
+    is?: number
   }
 
   export class LengthValidator extends Validator {
