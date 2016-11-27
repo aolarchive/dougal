@@ -1,5 +1,12 @@
 namespace Dougal {
 
+  export interface IValidatorOptions {
+    message: string
+    length?: Validations.ILengthOptions
+    number?: Validations.INumberOptions
+    presence?: Validations.IPresenceOptions
+  }
+
   @Extendable
   export abstract class Validator {
     static simple(validate) {
@@ -10,8 +17,8 @@ namespace Dougal {
       };
     }
 
-    constructor(protected options: any = {}) {}
+    constructor(protected options?: IValidatorOptions) {}
 
-    abstract validate(record: any, attribute?: string, value?: any)
+    abstract validate(record: Model, attribute?: string, value?: any)
   }
 }

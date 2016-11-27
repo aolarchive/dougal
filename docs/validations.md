@@ -53,6 +53,31 @@ Available options:
 * `maximum`
 * `minimum`
 
+### Number
+
+```javascript
+this.validates('salary', {
+  number: true,
+  message: 'Salary has to be a number'
+});
+this.salary = '';
+this.errors.salary; // ['Salary has to be a number']
+this.validates('salary', {
+  number: {greaterThan: 0},
+  message: 'Salary has to be positive'
+});
+this.salary = '-10';
+this.errors.salary; // ['Salary has to be positive']
+```
+
+Available options:
+
+* `true` to only make sure the input is a number
+* `greaterThan`
+* `greaterThanOrEqualTo`
+* `lessThan`
+* `lessThanOrEqualTo`
+
 ### Presence
 
 ```javascript

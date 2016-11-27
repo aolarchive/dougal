@@ -9,5 +9,6 @@
   "lib/validations/validatorResolver.ts",
   "lib/validations/errorHandler.ts",
   "lib/validations/length.ts",
+  "lib/validations/number.ts",
   "lib/validations/presence.ts"
 ]

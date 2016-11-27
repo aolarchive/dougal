@@ -46,7 +46,7 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    function Attribute(prototype, attribute, options) {
+    function Attribute(prototype, attribute) {
         Object.defineProperty(prototype, attribute, {
             get: function () {
                 return this.get(attribute);
@@ -240,7 +240,6 @@ var Dougal;
 (function (Dougal) {
     var Validator = (function () {
         function Validator(options) {
-            if (options === void 0) { options = {}; }
             this.options = options;
         }
         Validator.simple = function (validate) {
@@ -392,12 +391,12 @@ var Dougal;
                 var length = _.size(value);
                 var lengthOptions = this.options.length;
                 var results = {
-                    is: length !== lengthOptions.is,
-                    minimum: length < lengthOptions.minimum,
-                    maximum: length > lengthOptions.maximum
+                    is: length === lengthOptions.is,
+                    minimum: length >= lengthOptions.minimum,
+                    maximum: length <= lengthOptions.maximum
                 };
                 _.each(results, function (valid, test) {
-                    if (lengthOptions[test] && valid) {
+                    if (lengthOptions[test] && !valid) {
                         record.errors.add(attribute, _this.options.message);
                     }
                 });
@@ -405,6 +404,39 @@ var Dougal;
             return LengthValidator;
         }(Dougal.Validator));
         Validations.LengthValidator = LengthValidator;
+    })(Validations = Dougal.Validations || (Dougal.Validations = {}));
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
+    var Validations;
+    (function (Validations) {
+        var NumberValidator = (function (_super) {
+            __extends(NumberValidator, _super);
+            function NumberValidator() {
+                _super.apply(this, arguments);
+            }
+            NumberValidator.prototype.validate = function (record, attribute, value) {
+                var _this = this;
+                var parsedValue = parseFloat(value);
+                var numberOptions = this.options.number;
+                if (_.isNaN(parsedValue)) {
+                    record.errors.add(attribute, this.options.message);
+                }
+                var results = {
+                    greaterThan: value > numberOptions.greaterThan,
+                    greaterThanOrEqualTo: value >= numberOptions.greaterThanOrEqualTo,
+                    lessThan: value < numberOptions.lessThan,
+                    lessThanOrEqualTo: value <= numberOptions.lessThanOrEqualTo
+                };
+                _.each(results, function (valid, test) {
+                    if (numberOptions[test] && !valid) {
+                        record.errors.add(attribute, _this.options.message);
+                    }
+                });
+            };
+            return NumberValidator;
+        }(Dougal.Validator));
+        Validations.NumberValidator = NumberValidator;
     })(Validations = Dougal.Validations || (Dougal.Validations = {}));
 })(Dougal || (Dougal = {}));
 var Dougal;

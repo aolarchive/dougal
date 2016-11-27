@@ -1,7 +1,7 @@
 namespace Dougal.Tests {
   describe('Dougal.Validations.LengthValidator', () => {
     let model: SampleModel;
-    let options: any = {length: {}, message: 'error'};
+    let options: IValidatorOptions = {length: {}, message: 'error'};
     let length = new Validations.LengthValidator(options);
 
     class SampleModel extends Dougal.Model {

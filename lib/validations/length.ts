@@ -1,13 +1,13 @@
 namespace Dougal.Validations {
   export interface ILengthOptions {
-    minimum?: number,
-    maximum?: number,
+    minimum?: number
+    maximum?: number
     is?: number
   }
 
   export class LengthValidator extends Validator {
 
-    constructor(options?: any) {
+    constructor(options?: IValidatorOptions) {
       super(options);
     }
 
@@ -16,13 +16,13 @@ namespace Dougal.Validations {
       let lengthOptions: ILengthOptions = this.options.length;
 
       let results = {
-        is: length !== lengthOptions.is,
-        minimum: length < lengthOptions.minimum,
-        maximum: length > lengthOptions.maximum
+        is: length === lengthOptions.is,
+        minimum: length >= lengthOptions.minimum,
+        maximum: length <= lengthOptions.maximum
       };
 
       _.each(results, (valid: boolean, test: string) => {
-        if (lengthOptions[test] && valid) {
+        if (lengthOptions[test] && !valid) {
           record.errors.add(attribute, this.options.message);
         }
       });

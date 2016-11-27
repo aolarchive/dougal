@@ -8,12 +8,6 @@ namespace Dougal {
     silent?: boolean
   }
 
-  interface IValidatesOption {
-    presence?: Validations.IPresenceOptions
-    length?: Validations.ILengthOptions
-    message: string
-  }
-
   export abstract class Model {
     protected static all(ExtendedModel): Q.Promise<Model[]> {
       let model: Model = new ExtendedModel();
@@ -163,7 +157,7 @@ namespace Dougal {
 
     validates(attribute: string, method: string): void;
     validates(attribute: string, validator: Validator): void;
-    validates(attribute: string, options: IValidatesOption): void;
+    validates(attribute: string, options: IValidatorOptions): void;
     validates(): void {
       this.validators.push(new Validations.ValidatorResolver(arguments));
       this.validate();
