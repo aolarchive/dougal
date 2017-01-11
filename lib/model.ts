@@ -58,7 +58,7 @@ namespace Dougal {
     errors: Validations.ErrorHandler = new Validations.ErrorHandler(this);
     idAttribute: string = 'id';
     serializer = new Serializer(this);
-    store: Store = defaultStore;
+    store: Store = Config.defaultStore;
     urlRoot: string;
     validators: Validations.ValidatorResolver[] = [];
 
@@ -137,7 +137,7 @@ namespace Dougal {
 
     url(): string {
       let baseUrl = _.template(this.urlRoot, {
-        interpolate: Dougal.URL_INTERPOLATION
+        interpolate: Dougal.Config.urlInterpolation
       })(this.attributes);
 
       if (this.isNew()) {

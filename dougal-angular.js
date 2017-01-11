@@ -54,7 +54,7 @@
         .constant('Dougal', Dougal)
         .factory('$httpStore', ['Dougal', '$http', $httpStoreFactory])
         .run(['Dougal', '$httpStore', '$q', function (Dougal, $httpStore, $q) {
-            Dougal.defaultStore = new $httpStore();
+            Dougal.Config.defaultStore = new $httpStore();
             Dougal.q = $q;
         }]);
 })(window['angular'], window['Dougal']);

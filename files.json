@@ -1,5 +1,6 @@
 [
   "lib/dougal.ts",
+  "lib/config.ts",
   "lib/q.ts",
   "lib/decorators/attribute.ts",
   "lib/decorators/extendable.ts",

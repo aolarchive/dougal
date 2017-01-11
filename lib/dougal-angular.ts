@@ -60,7 +60,7 @@
     .constant('Dougal', Dougal)
     .factory('$httpStore', ['Dougal', '$http', $httpStoreFactory])
     .run(['Dougal', '$httpStore', '$q', (Dougal, $httpStore, $q) => {
-      Dougal.defaultStore = new $httpStore();
+      Dougal.Config.defaultStore = new $httpStore();
       Dougal.q = $q;
     }]);
 

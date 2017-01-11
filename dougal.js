@@ -12,8 +12,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Dougal;
 (function (Dougal) {
-    Dougal.defaultStore = undefined;
-    Dougal.URL_INTERPOLATION = /:(\w+)/g;
+    var Config;
+    (function (Config) {
+        Config.defaultStore = undefined;
+        Config.urlInterpolation = /:(\w+)/g;
+    })(Config = Dougal.Config || (Dougal.Config = {}));
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -84,7 +87,7 @@ var Dougal;
             this.errors = new Dougal.Validations.ErrorHandler(this);
             this.idAttribute = 'id';
             this.serializer = new Dougal.Serializer(this);
-            this.store = Dougal.defaultStore;
+            this.store = Dougal.Config.defaultStore;
             this.validators = [];
             this.set(attributes, { silent: true });
         }
@@ -192,7 +195,7 @@ var Dougal;
         };
         Model.prototype.url = function () {
             var baseUrl = _.template(this.urlRoot, {
-                interpolate: Dougal.URL_INTERPOLATION
+                interpolate: Dougal.Config.urlInterpolation
             })(this.attributes);
             if (this.isNew()) {
                 return baseUrl;
