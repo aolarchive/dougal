@@ -213,8 +213,11 @@ var Dougal;
             var _this = this;
             this.errors = new Dougal.Validations.ErrorHandler(this);
             _.each(this.validators, function (resolver) {
-                resolver.run(_this);
+                if (!resolver.run(_this)) {
+                    _this.errors.add(resolver.attribute, resolver.validator.message);
+                }
             });
+            return this.isValid();
         };
         Model.prototype.validates = function () {
             this.validators.push(new Dougal.Validations.ValidatorResolver(arguments));
@@ -261,6 +264,13 @@ var Dougal;
                 return AnonymousValidator;
             }(Validator));
         };
+        Object.defineProperty(Validator.prototype, "message", {
+            get: function () {
+                return this.options.message;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Validator = __decorate([
             Dougal.Extendable
         ], Validator);
@@ -277,27 +287,21 @@ var Dougal;
         };
         var ValidatorResolver = (function () {
             function ValidatorResolver(args) {
-                switch (args.length) {
-                    case 2:
-                        this.resolveAttributeValidator(args);
-                        break;
-                    default:
-                        throw ResolverErrors.INVALID_FORMAT;
-                }
+                this.resolveAttributeValidator(args);
             }
             ValidatorResolver.prototype.resolveAttributeValidator = function (args) {
                 if (!_.isString(args[0])) {
                     throw ResolverErrors.INVALID_FORMAT;
                 }
                 this.attribute = args[0];
-                this.resolveValidator(args[1]);
+                this.resolveValidator(args[1], args[2]);
             };
-            ValidatorResolver.prototype.resolveValidator = function (validator) {
+            ValidatorResolver.prototype.resolveValidator = function (validator, message) {
                 if (validator instanceof Dougal.Validator) {
                     this.validator = validator;
                 }
                 else if (_.isString(validator)) {
-                    this.resolveString(validator);
+                    this.resolveString(validator, message);
                 }
                 else if (_.isObject(validator)) {
                     this.resolveObject(validator);
@@ -306,11 +310,11 @@ var Dougal;
                     throw ResolverErrors.INVALID_FORMAT;
                 }
             };
-            ValidatorResolver.prototype.resolveString = function (method) {
+            ValidatorResolver.prototype.resolveString = function (method, message) {
                 var Anon = Dougal.Validator.simple(function (record, attribute, value) {
-                    _.get(record, method, _.noop).call(record, attribute, value);
+                    return _.get(record, method, _.noop).call(record, attribute, value);
                 });
-                this.validator = new Anon();
+                this.validator = new Anon({ message: message });
             };
             ValidatorResolver.prototype.resolveObject = function (options) {
                 var validators = _(options)
@@ -325,15 +329,18 @@ var Dougal;
                     .value();
                 var Anon = Dougal.Validator.simple(function () {
                     var args = arguments;
-                    _.each(validators, function (validator) {
-                        validator.validate.apply(validator, args);
-                    });
+                    return _.reduce(validators, function (anyError, validator) {
+                        return anyError || !!validator.validate.apply(validator, args);
+                    }, false);
                 });
                 this.validator = new Anon(options);
             };
             ValidatorResolver.prototype.run = function (record) {
                 if (this.attribute) {
-                    this.validator.validate(record, this.attribute, record.get(this.attribute));
+                    return this.validator.validate(record, this.attribute, record.get(this.attribute));
+                }
+                else {
+                    return false;
                 }
             };
             return ValidatorResolver;
@@ -394,7 +401,6 @@ var Dougal;
                 _super.call(this, options);
             }
             LengthValidator.prototype.validate = function (record, attribute, value) {
-                var _this = this;
                 var length = _.size(value);
                 var lengthOptions = this.options.length;
                 var results = {
@@ -402,11 +408,10 @@ var Dougal;
                     minimum: length >= lengthOptions.minimum,
                     maximum: length <= lengthOptions.maximum
                 };
-                _.each(results, function (valid, test) {
-                    if (lengthOptions[test] && !valid) {
-                        record.errors.add(attribute, _this.options.message);
-                    }
-                });
+                return _(results)
+                    .values()
+                    .without(false)
+                    .some();
             };
             return LengthValidator;
         }(Dougal.Validator));
@@ -423,11 +428,10 @@ var Dougal;
                 _super.apply(this, arguments);
             }
             NumberValidator.prototype.validate = function (record, attribute, value) {
-                var _this = this;
                 var parsedValue = parseFloat(value);
                 var numberOptions = this.options.number;
                 if (_.isNaN(parsedValue)) {
-                    record.errors.add(attribute, this.options.message);
+                    return false;
                 }
                 var results = {
                     greaterThan: value > numberOptions.greaterThan,
@@ -435,11 +439,10 @@ var Dougal;
                     lessThan: value < numberOptions.lessThan,
                     lessThanOrEqualTo: value <= numberOptions.lessThanOrEqualTo
                 };
-                _.each(results, function (valid, test) {
-                    if (numberOptions[test] && !valid) {
-                        record.errors.add(attribute, _this.options.message);
-                    }
-                });
+                return _(results)
+                    .values()
+                    .without(false)
+                    .some();
             };
             return NumberValidator;
         }(Dougal.Validator));
@@ -456,9 +459,7 @@ var Dougal;
                 _super.apply(this, arguments);
             }
             PresenceValidator.prototype.validate = function (record, attribute, value) {
-                if (this.options.presence && (_.isNil(value) || value === '')) {
-                    record.errors.add(attribute, this.options.message);
-                }
+                return !(this.options.presence && (_.isNil(value) || value === ''));
             };
             return PresenceValidator;
         }(Dougal.Validator));

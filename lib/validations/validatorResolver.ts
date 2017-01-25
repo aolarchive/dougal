@@ -8,13 +8,7 @@ namespace Dougal.Validations {
     validator: Validator;
 
     constructor(args: IArguments) {
-      switch (args.length) {
-      case 2:
-        this.resolveAttributeValidator(args);
-        break;
-      default:
-        throw ResolverErrors.INVALID_FORMAT;
-      }
+      this.resolveAttributeValidator(args);
     }
 
     private resolveAttributeValidator(args: IArguments) {
@@ -22,14 +16,14 @@ namespace Dougal.Validations {
         throw ResolverErrors.INVALID_FORMAT;
       }
       this.attribute = <string> args[0];
-      this.resolveValidator(args[1]);
+      this.resolveValidator(args[1], args[2]);
     }
 
-    private resolveValidator(validator: any) {
+    private resolveValidator(validator: any, message?: string) {
       if (validator instanceof Validator) {
         this.validator = validator;
       } else if (_.isString(validator)) {
-        this.resolveString(validator);
+        this.resolveString(validator, message);
       } else if (_.isObject(validator)) {
         this.resolveObject(validator);
       } else {
@@ -37,11 +31,11 @@ namespace Dougal.Validations {
       }
     }
 
-    private resolveString(method: string) {
+    private resolveString(method: string, message: string) {
       let Anon = Validator.simple(function (record, attribute, value) {
-        _.get(record, method, _.noop).call(record, attribute, value);
+        return _.get(record, method, _.noop).call(record, attribute, value);
       });
-      this.validator = new Anon();
+      this.validator = new Anon({message: message});
     }
 
     private resolveObject(options: any) {
@@ -57,16 +51,19 @@ namespace Dougal.Validations {
         .value();
       let Anon = Validator.simple(function () {
         let args = arguments;
-        _.each(validators, (validator) => {
-          validator.validate.apply(validator, args);
-        });
+        return _.reduce(validators, (anyError: boolean, validator) => {
+          return anyError || !!validator.validate.apply(validator, args);
+        }, false);
       });
       this.validator = new Anon(options);
     }
 
     run(record) {
       if (this.attribute) {
-        this.validator.validate(record, this.attribute, record.get(this.attribute));
+        return this.validator.validate(record, this.attribute, record.get(this.attribute));
+      } else {
+        // TODO
+        return false;
       }
     }
   }

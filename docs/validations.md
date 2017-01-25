@@ -107,9 +107,7 @@ this.validates('name', {
 ```javascript
 var CustomValidator = Dougal.Validator.extends(function () {
   this.validate = function (record, attribute, value) {
-    if (conditionNotMet) {
-      this.errors.add('name', this.options.message);
-    }
+    return trueIfValid;
   };
 });
 this.validates('name', new CustomValidator({message: 'some message'}));
@@ -119,9 +117,7 @@ this.validates('name', new CustomValidator({message: 'some message'}));
 
 ```javascript
 this.validateName = function () {
-  if (conditionNotMet) {
-    this.errors.add('name', 'Condition not met');
-  }
+  return trueIfValid;
 };
-this.validates('name', 'validateName');
+this.validates('name', 'validateName', 'Condition not met');
 ```

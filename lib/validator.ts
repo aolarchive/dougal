@@ -19,6 +19,10 @@ namespace Dougal {
 
     constructor(protected options?: IValidatorOptions) {}
 
-    abstract validate(record: Model, attribute?: string, value?: any)
+    abstract validate(record: Model, attribute?: string, value?: any): boolean
+
+    get message(): string {
+      return this.options.message;
+    }
   }
 }

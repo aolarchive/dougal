@@ -148,14 +148,17 @@ namespace Dougal {
       }
     }
 
-    validate(): void {
+    validate(): boolean {
       this.errors = new Validations.ErrorHandler(this);
       _.each(this.validators, (resolver: Validations.ValidatorResolver) => {
-        resolver.run(this);
+        if (!resolver.run(this)) {
+          this.errors.add(resolver.attribute, resolver.validator.message);
+        }
       });
+      return this.isValid();
     }
 
-    validates(attribute: string, method: string): void;
+    validates(attribute: string, method: string, message: string): void;
     validates(attribute: string, validator: Validator): void;
     validates(attribute: string, options: IValidatorOptions): void;
     validates(): void {
