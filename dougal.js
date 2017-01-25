@@ -12,6 +12,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Dougal;
 (function (Dougal) {
+    Dougal.Version = '1.0.0';
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
     var Config;
     (function (Config) {
         Config.defaultStore = undefined;
