@@ -71,6 +71,20 @@ namespace Dougal.Tests {
           expect(employee.validate).not.toHaveBeenCalled();
         });
       });
+
+      describe('validate', () => {
+        it('should mark a model as valid only if all validations pass', () => {
+          employee.name = 'John Doe';
+          expect(employee.isValid()).toBe(true);
+          expect(employee.errors.any()).toBe(false);
+          expect(employee.errors.name).toEqual([]);
+
+          employee.name = '';
+          expect(employee.isValid()).toBe(false);
+          expect(employee.errors.any()).toBe(true);
+          expect(employee.errors.name).toEqual(['Name is required']);
+        });
+      })
     });
   });
 }

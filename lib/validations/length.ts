@@ -11,7 +11,7 @@ namespace Dougal.Validations {
       super(options);
     }
 
-    validate(record: Model, attribute: string, value: any) {
+    validate(record: Model, attribute: string, value: any): boolean {
       let length = _.size(value);
       let lengthOptions: ILengthOptions = this.options.length;
 
@@ -21,11 +21,10 @@ namespace Dougal.Validations {
         maximum: length <= lengthOptions.maximum
       };
 
-      _.each(results, (valid: boolean, test: string) => {
-        if (lengthOptions[test] && !valid) {
-          record.errors.add(attribute, this.options.message);
-        }
-      });
+      return _(results)
+        .values()
+        .without(false)
+        .some();
     }
   }
 }
