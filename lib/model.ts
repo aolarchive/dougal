@@ -12,9 +12,9 @@ namespace Dougal {
     protected static all(ExtendedModel): Q.Promise<Model[]> {
       let model: Model = new ExtendedModel();
       return model.store.list(model.urlRoot)
-        .then((models) => {
-          return _.map(models, (model) => {
-            return new ExtendedModel(model);
+        .then((response) => {
+          return _.map(response, (data) => {
+            return new ExtendedModel().parse(data);
           });
         });
     }
@@ -46,7 +46,7 @@ namespace Dougal {
       return model.store.read(model)
         .then((data) => {
           if (data) {
-            model.set(data, {silent: true});
+            model.parse(data);
             return model;
           }
           return q.reject('Record Not Found');
@@ -57,7 +57,7 @@ namespace Dougal {
     changed: any = {};
     errors: Validations.ErrorHandler = new Validations.ErrorHandler(this);
     idAttribute: string = 'id';
-    serializer = new Serializer(this);
+    serializers = {};
     store: Store = Config.defaultStore;
     urlRoot: string;
     validators: Validations.ValidatorResolver[] = [];
@@ -66,8 +66,17 @@ namespace Dougal {
       this.set(attributes, {silent: true});
     }
 
-    attribute(name: string): void {
-      Attribute(this, name);
+    attribute(name: string, type?: string): void {
+      Object.defineProperty(this, name, {
+        get: function () {
+          return this.get(name);
+        },
+        set: function (value) {
+          this.set(name, value);
+        }
+      });
+
+      this.serializes(name, type);
     }
 
     get(key: string): any {
@@ -90,6 +99,15 @@ namespace Dougal {
       return !this.errors.any();
     }
 
+    parse(response: Object): Model {
+      var data = _.clone(response);
+      _.forEach(this.serializers, (serializer: Serialization.ISerializer, key: string) => {
+        _.set(data, key, serializer.parse(_.get(data, key)));
+      });
+      this.set(data, {silent: true});
+      return this;
+    }
+
     save(options?: ISaveOptions): Q.Promise<any> {
       options = _.defaults(options, {
         validate: true
@@ -102,10 +120,14 @@ namespace Dougal {
       }
       return (this.isNew() ? this.store.create(this) : this.store.update(this))
         .then((response) => {
-          this.set(this.serializer.parse(response));
+          this.parse(response);
           this.changed = {};
           return response;
         });
+    }
+
+    serializes(key: string, serializer: Serializer) {
+      this.serializers[key] = Serialization.resolve(serializer);
     }
 
     set(attributes: Object, options?: ISetOptions): void;
@@ -133,6 +155,14 @@ namespace Dougal {
       if (!options.silent){
         this.validate();
       }
+    }
+
+    toJson(): Object {
+      var json = _.cloneDeep(this.attributes);
+      _.forEach(this.serializers, (serializer: Serialization.ISerializer, key: string) => {
+        _.set(json, key, serializer.format(_.get(json, key)));
+      });
+      return json;
     }
 
     url(): string {
