@@ -1,0 +1,17 @@
+{
+  "name": "dougal",
+  "description": "The M of MVC, for Javascript VC frameworks that lack a decent M",
+  "main": "dougal.js",
+  "authors": [
+    "Emmanuel Bourgerie <manu@bourgerie.fr>"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/manudwarf/dougal",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

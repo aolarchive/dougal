@@ -1,8 +1,8 @@
 {
   "name": "dougal",
-  "version": "1.0.0",
-  "description": "",
-  "main": "karma.conf.js",
+  "version": "0.1.0",
+  "description": "The M of MVC, for Javascript VC frameworks that lack a decent M",
+  "main": "dougal.js",
   "directories": {
     "test": "test"
   },
@@ -35,6 +35,6 @@
   "scripts": {
     "test": "./node_modules/.bin/karma start --single-run"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Emmanuel Bourgerie <manu@bourgerie.fr>",
+  "license": "Apache-2.0"
 }
