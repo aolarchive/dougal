@@ -1,7 +1,7 @@
 # Dougal
 
-[![Build Status](https://travis-ci.org/manudwarf/dougal.svg?branch=master)](https://travis-ci.org/manudwarf/dougal)
-[![Coverage Status](https://coveralls.io/repos/github/manudwarf/dougal/badge.svg)](https://coveralls.io/github/manudwarf/dougal)
+[![Build Status](https://travis-ci.org/aol/dougal.svg?branch=master)](https://travis-ci.org/aol/dougal)
+[![Coverage Status](https://coveralls.io/repos/github/aol/dougal/badge.svg)](https://coveralls.io/github/aol/dougal)
 
 The M of MVC, for Javascript VC frameworks that lack a decent M.
 
@@ -10,7 +10,7 @@ The M of MVC, for Javascript VC frameworks that lack a decent M.
 Install Dougal:
 
 ```
-$ npm install manudwarf/dougal
+$ npm install aol/dougal
 ```
 ```html
 <script src="node_modules/dougal/dougal.js"></script>
