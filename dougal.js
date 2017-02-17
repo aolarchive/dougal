@@ -1,18 +1,18 @@
 (function (Dougal) { 'use strict';
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Dougal;
 (function (Dougal) {
-    Dougal.Version = '1.0.0';
+    Dougal.Version = '0.1.1';
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -32,7 +32,6 @@ var Dougal;
     }
     Dougal.q = q;
     ;
-    var q;
     (function (q) {
         function reject(error) {
             var deferred = Q.defer();
@@ -49,21 +48,6 @@ var Dougal;
         q.when = when;
         ;
     })(q = Dougal.q || (Dougal.q = {}));
-    ;
-})(Dougal || (Dougal = {}));
-var Dougal;
-(function (Dougal) {
-    function Attribute(prototype, attribute) {
-        Object.defineProperty(prototype, attribute, {
-            get: function () {
-                return this.get(attribute);
-            },
-            set: function (value) {
-                this.set(attribute, value);
-            }
-        });
-    }
-    Dougal.Attribute = Attribute;
     ;
 })(Dougal || (Dougal = {}));
 var Dougal;
@@ -90,7 +74,7 @@ var Dougal;
             this.changed = {};
             this.errors = new Dougal.Validations.ErrorHandler(this);
             this.idAttribute = 'id';
-            this.serializer = new Dougal.Serializer(this);
+            this.serializers = {};
             this.store = Dougal.Config.defaultStore;
             this.validators = [];
             this.set(attributes, { silent: true });
@@ -98,9 +82,9 @@ var Dougal;
         Model.all = function (ExtendedModel) {
             var model = new ExtendedModel();
             return model.store.list(model.urlRoot)
-                .then(function (models) {
-                return _.map(models, function (model) {
-                    return new ExtendedModel(model);
+                .then(function (response) {
+                return _.map(response, function (data) {
+                    return new ExtendedModel().parse(data);
                 });
             });
         };
@@ -126,14 +110,22 @@ var Dougal;
             return model.store.read(model)
                 .then(function (data) {
                 if (data) {
-                    model.set(data, { silent: true });
+                    model.parse(data);
                     return model;
                 }
                 return Dougal.q.reject('Record Not Found');
             });
         };
-        Model.prototype.attribute = function (name) {
-            Dougal.Attribute(this, name);
+        Model.prototype.attribute = function (name, type) {
+            Object.defineProperty(this, name, {
+                get: function () {
+                    return this.get(name);
+                },
+                set: function (value) {
+                    this.set(name, value);
+                }
+            });
+            this.serializes(name, type);
         };
         Model.prototype.get = function (key) {
             return _.get(this.attributes, key);
@@ -154,6 +146,14 @@ var Dougal;
         Model.prototype.isValid = function () {
             return !this.errors.any();
         };
+        Model.prototype.parse = function (response) {
+            var data = _.clone(response);
+            _.forEach(this.serializers, function (serializer, key) {
+                _.set(data, key, serializer.parse(_.get(data, key)));
+            });
+            this.set(data, { silent: true });
+            return this;
+        };
         Model.prototype.save = function (options) {
             var _this = this;
             options = _.defaults(options, {
@@ -167,10 +167,13 @@ var Dougal;
             }
             return (this.isNew() ? this.store.create(this) : this.store.update(this))
                 .then(function (response) {
-                _this.set(_this.serializer.parse(response));
+                _this.parse(response);
                 _this.changed = {};
                 return response;
             });
+        };
+        Model.prototype.serializes = function (key, serializer) {
+            this.serializers[key] = Dougal.Serialization.resolve(serializer);
         };
         Model.prototype.set = function () {
             var _this = this;
@@ -196,6 +199,13 @@ var Dougal;
             if (!options.silent) {
                 this.validate();
             }
+        };
+        Model.prototype.toJson = function () {
+            var json = _.cloneDeep(this.attributes);
+            _.forEach(this.serializers, function (serializer, key) {
+                _.set(json, key, serializer.format(_.get(json, key)));
+            });
+            return json;
         };
         Model.prototype.url = function () {
             var baseUrl = _.template(this.urlRoot, {
@@ -229,26 +239,49 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    var Serializer = (function () {
-        function Serializer(record) {
-            this.record = record;
+    var Serialization;
+    (function (Serialization) {
+        var availableSerializers = {};
+        function get(name) {
+            return availableSerializers[_.toLower(name)];
         }
-        Serializer.prototype.format = function () {
-            return _.cloneDeep(this.record.attributes);
+        Serialization.get = get;
+        function register(name, serializer) {
+            availableSerializers[_.toLower(name)] = serializer;
+        }
+        Serialization.register = register;
+        function resolve(serializer) {
+            return (_.isString(serializer) ? get(serializer) : serializer)
+                || { format: _.identity, parse: _.identity };
+        }
+        Serialization.resolve = resolve;
+        var DateSerializer = {
+            format: function (value) {
+                return _.isDate(value)
+                    ? value.toISOString()
+                    : value;
+            },
+            parse: function (value) {
+                return new Date(value);
+            }
         };
-        Serializer.prototype.parse = function (object) {
-            return object;
+        register('date', DateSerializer);
+        var NumberSerializer = {
+            format: _.identity,
+            parse: function (value) {
+                return parseFloat(value);
+            }
         };
-        Serializer = __decorate([
-            Dougal.Extendable
-        ], Serializer);
-        return Serializer;
-    }());
-    Dougal.Serializer = Serializer;
+        register('number', NumberSerializer);
+    })(Serialization = Dougal.Serialization || (Dougal.Serialization = {}));
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    var Validator = (function () {
+    Dougal.TEMP = 'FIXME';
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
+    var Validator = Validator_1 = (function () {
         function Validator(options) {
             this.options = options;
         }
@@ -256,13 +289,13 @@ var Dougal;
             return (function (_super) {
                 __extends(AnonymousValidator, _super);
                 function AnonymousValidator() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 AnonymousValidator.prototype.validate = function () {
                     return validate.apply(this, arguments);
                 };
                 return AnonymousValidator;
-            }(Validator));
+            }(Validator_1));
         };
         Object.defineProperty(Validator.prototype, "message", {
             get: function () {
@@ -271,12 +304,13 @@ var Dougal;
             enumerable: true,
             configurable: true
         });
-        Validator = __decorate([
-            Dougal.Extendable
-        ], Validator);
         return Validator;
     }());
+    Validator = Validator_1 = __decorate([
+        Dougal.Extendable
+    ], Validator);
     Dougal.Validator = Validator;
+    var Validator_1;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -398,7 +432,7 @@ var Dougal;
         var LengthValidator = (function (_super) {
             __extends(LengthValidator, _super);
             function LengthValidator(options) {
-                _super.call(this, options);
+                return _super.call(this, options) || this;
             }
             LengthValidator.prototype.validate = function (record, attribute, value) {
                 var length = _.size(value);
@@ -425,7 +459,7 @@ var Dougal;
         var NumberValidator = (function (_super) {
             __extends(NumberValidator, _super);
             function NumberValidator() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             NumberValidator.prototype.validate = function (record, attribute, value) {
                 var parsedValue = parseFloat(value);
@@ -456,7 +490,7 @@ var Dougal;
         var PresenceValidator = (function (_super) {
             __extends(PresenceValidator, _super);
             function PresenceValidator() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             PresenceValidator.prototype.validate = function (record, attribute, value) {
                 return !(this.options.presence && (_.isNil(value) || value === ''));

@@ -17,7 +17,7 @@
                 return $http({
                     method: 'POST',
                     url: record.url(),
-                    data: record.serializer.format()
+                    data: record.toJson()
                 }).then(function (response) {
                     return response.data;
                 });
@@ -34,7 +34,7 @@
                 return $http({
                     method: 'PUT',
                     url: record.url(),
-                    data: record.serializer.format()
+                    data: record.toJson()
                 }).then(function (response) {
                     return response.data;
                 });
