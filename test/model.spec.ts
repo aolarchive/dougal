@@ -54,6 +54,19 @@ namespace Dougal.Tests {
         employee = new Employee();
       });
 
+      describe('parse', () => {
+        it('should parse dates', () => {
+          employee.parse({
+            id: 123,
+            name: 'John Doe',
+            birthdate: '2000-01-01T00:00:00.000Z'
+          });
+          expect(employee.id).toEqual(123);
+          expect(employee.name).toEqual('John Doe');
+          expect(employee.birthdate).toEqual(new Date('2000-01-01'));
+        });
+      });
+
       describe('save', () => {
         it('should reject if validations fail', (done) => {
           employee.save()
@@ -72,6 +85,18 @@ namespace Dougal.Tests {
         });
       });
 
+      describe('toJson', () => {
+        it('should use serializers to format to JSON', () => {
+          employee.birthdate = new Date('2000-01-01');
+          employee.name = 'John Doe';
+          expect(employee.toJson()).toEqual({
+            id: undefined,
+            birthdate: '2000-01-01T00:00:00.000Z',
+            name: 'John Doe'
+          });
+        });
+      });
+
       describe('validate', () => {
         it('should mark a model as valid only if all validations pass', () => {
           employee.name = 'John Doe';
@@ -84,7 +109,7 @@ namespace Dougal.Tests {
           expect(employee.errors.any()).toBe(true);
           expect(employee.errors.name).toEqual(['Name is required']);
         });
-      })
+      });
     });
   });
 }

@@ -12,17 +12,16 @@ namespace Dougal.Tests {
     store = new LocalStore();
     urlRoot = '/employees';
 
-    @Attribute
     id: number;
-
-    @Attribute
     name: string;
-
-    @Attribute
     birthdate: Date;
 
     constructor(attributes?: any) {
       super(attributes);
+
+      this.attribute('id', 'Number');
+      this.attribute('name');
+      this.attribute('birthdate', 'Date');
 
       this.validates('name', {
         presence: true,
