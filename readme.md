@@ -1,6 +1,7 @@
 # Dougal
 
 [![Build Status](https://travis-ci.org/manudwarf/dougal.svg?branch=master)](https://travis-ci.org/manudwarf/dougal)
+[![Coverage Status](https://coveralls.io/repos/github/manudwarf/dougal/badge.svg?branch=coverage)](https://coveralls.io/github/manudwarf/dougal?branch=coverage)
 
 The M of MVC, for Javascript VC frameworks that lack a decent M.
 
