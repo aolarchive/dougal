@@ -29,6 +29,18 @@ module.exports = function(config) {
       'test/dougal-angular.spec.ts'
     ]),
 
+    coverageReporter: {
+      dir: 'coverage/',
+      reporters: [{
+        type: 'lcov',
+        subdir: 'report-lcov'
+      }, {
+        type: 'lcovonly',
+        subdir: '.',
+        file: 'lcov.info'
+      }]
+    },
+
 
     // list of files to exclude
     exclude: [
@@ -45,7 +57,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'karma-typescript'],
+    reporters: ['progress', 'karma-typescript', 'coverage'],
 
 
     // web server port
