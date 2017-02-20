@@ -35,6 +35,15 @@ namespace Dougal.Tests {
             .finally(done);
         });
 
+        it('should allow to pass complex objects', (done) => {
+          Employee.find({id: 1})
+            .then((employee) => {
+              expect(employee instanceof Employee).toBe(true);
+              expect(employee.id).toBe(1);
+            })
+            .finally(done);
+        });
+
         it('should throw an error if the record is not found', (done) => {
           Employee.find(999)
             .then(() => {
@@ -52,6 +61,13 @@ namespace Dougal.Tests {
       let employee: Employee;
       beforeEach(() => {
         employee = new Employee();
+      });
+
+      describe('id', () => {
+        it('should surface the ID', () => {
+          employee.id = 123;
+          expect(employee.id).toBe(123);
+        });
       });
 
       describe('parse', () => {

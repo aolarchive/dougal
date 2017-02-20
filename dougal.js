@@ -106,7 +106,12 @@ var Dougal;
         };
         Model.find = function (id, ExtendedModel) {
             var model = new ExtendedModel();
-            model.set(model.idAttribute, id, { silent: true });
+            if (_.isObject(id)) {
+                model.set(id, { silent: true });
+            }
+            else {
+                model.set(model.idAttribute, id, { silent: true });
+            }
             return model.store.read(model)
                 .then(function (data) {
                 if (data) {
@@ -135,7 +140,7 @@ var Dougal;
         };
         Object.defineProperty(Model.prototype, "id", {
             get: function () {
-                return this.attribute[this.idAttribute];
+                return this.attributes[this.idAttribute];
             },
             enumerable: true,
             configurable: true

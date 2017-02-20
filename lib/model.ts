@@ -42,7 +42,11 @@ namespace Dougal {
 
     protected static find(id: any, ExtendedModel): Q.Promise<Model> {
       let model: Model = new ExtendedModel();
-      model.set(model.idAttribute, id, {silent: true});
+      if (_.isObject(id)) {
+        model.set(id, {silent: true});
+      } else {
+        model.set(model.idAttribute, id, {silent: true});
+      }
       return model.store.read(model)
         .then((data) => {
           if (data) {
@@ -88,7 +92,7 @@ namespace Dougal {
     }
 
     get id() {
-      return this.attribute[this.idAttribute];
+      return this.attributes[this.idAttribute];
     }
 
     isNew(): boolean {
