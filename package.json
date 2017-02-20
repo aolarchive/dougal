@@ -1,6 +1,6 @@
 {
   "name": "dougal",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "The M of MVC, for Javascript VC frameworks that lack a decent M",
   "main": "dougal.js",
   "directories": {
