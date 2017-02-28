@@ -31,6 +31,23 @@ namespace Dougal.Tests.Angular {
         expect(store).toBeDefined();
       });
 
+      it('should read a list of records', function () {
+        $httpBackend.expectGET('/employees')
+          .respond([{
+            id: 1,
+            name: 'John'
+          }]);
+
+        store.list(employee.url())
+          .then((response) => {
+            expect(response).toEqual([{
+              id: 1,
+              name: 'John'
+            }]);
+          });
+        $httpBackend.flush();
+      });
+
       it('should create a new record', () => {
         $httpBackend.expectPOST('/employees', {
           name: 'John'

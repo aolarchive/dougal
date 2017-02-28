@@ -28,6 +28,11 @@ namespace Dougal.Tests {
         length: {minimum: 2},
         message: 'Name is required'
       });
+      this.validates('name', 'isNameValid', 'Some names are forbidden');
+    }
+
+    isNameValid() {
+      return this.name !== 'forbidden name';
     }
   }
 
