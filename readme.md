@@ -20,7 +20,7 @@ Define models:
 
 ```javascript
 var Employee = Dougal.Model.extends(function () {
-  this.baseUrl = '/employees';
+  this.urlRoot = '/employees';
 
   this.attribute('id');
   this.attribute('name');

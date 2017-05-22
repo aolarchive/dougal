@@ -27,7 +27,7 @@ errors.name; // ['Name is required']
 Saving require a valid model, otherwise a rejected promise will be returned:
 
 ```javascript
-employee.save().catch(function (errors) {
+employee.save().catch((errors) => {
   errors.name; // ['Name is required']
 });
 ```
@@ -106,7 +106,7 @@ this.validates('name', {
 
 ```javascript
 var CustomValidator = Dougal.Validator.extends(function () {
-  this.validate = function (record, attribute, value) {
+  this.validate = (record, attribute, value) => {
     return trueIfValid;
   };
 });
@@ -116,7 +116,7 @@ this.validates('name', new CustomValidator({message: 'some message'}));
 ### Validation method
 
 ```javascript
-this.validateName = function () {
+this.validateName = () => {
   return trueIfValid;
 };
 this.validates('name', 'validateName', 'Condition not met');
