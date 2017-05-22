@@ -12,7 +12,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var Dougal;
 (function (Dougal) {
-    Dougal.Version = '0.1.2';
+    Dougal.Version = '0.1.3';
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
