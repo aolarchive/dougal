@@ -146,7 +146,7 @@ namespace Dougal {
         changes = arguments[0] || {};
         options = arguments[1];
       }
-      
+
       options = _.defaults(options, {
         silent: false
       });
@@ -156,9 +156,7 @@ namespace Dougal {
           _.set(this.changed, key, value);
         }
       });
-      if (!options.silent){
-        this.validate();
-      }
+      this.validate();
     }
 
     toJson(): Object {

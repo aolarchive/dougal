@@ -12,7 +12,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var Dougal;
 (function (Dougal) {
-    Dougal.Version = '0.1.1';
+    Dougal.Version = '0.1.2';
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -201,9 +201,7 @@ var Dougal;
                     _.set(_this.changed, key, value);
                 }
             });
-            if (!options.silent) {
-                this.validate();
-            }
+            this.validate();
         };
         Model.prototype.toJson = function () {
             var json = _.cloneDeep(this.attributes);
