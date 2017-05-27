@@ -1,13 +1,14 @@
-const gulp = require('gulp');
-const concat = require('gulp-concat');
-const replace = require('gulp-string-replace');
-const watch = require('gulp-watch');
-const wrap = require('gulp-wrap');
+const gulp        = require('gulp');
+const concat      = require('gulp-concat');
+const liveServer  = require('gulp-live-server');
+const replace     = require('gulp-string-replace');
+const watch       = require('gulp-watch');
+const wrap        = require('gulp-wrap');
 
-const ts = require('gulp-typescript');
-const files = require('./files.json');
-const package = require('./package.json');
-const tsconfig = require('./tsconfig.json');
+const ts          = require('gulp-typescript');
+const files       = require('./files.json');
+const package     = require('./package.json');
+const tsconfig    = require('./tsconfig.json');
 
 gulp.task('dist', ['dist:angular'], () => {
   return gulp.src(files)
@@ -29,6 +30,13 @@ gulp.task('dist:angular', () => {
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(concat('dougal-angular.js'))
     .pipe(gulp.dest('.'));
+});
+
+// e2e tasks
+
+gulp.task('e2e:server', () => {
+  let server = liveServer.new('e2e/server.js');
+  server.start();
 });
 
 gulp.task('default', ['watch:dist']);
