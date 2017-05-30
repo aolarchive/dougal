@@ -132,6 +132,9 @@ var Dougal;
             });
             this.serializes(name, type);
         };
+        Model.prototype.delete = function () {
+            return this.store.delete(this);
+        };
         Model.prototype.get = function (key) {
             return _.get(this.attributes, key);
         };

@@ -9,6 +9,17 @@
     <p class="help-block" ng-repeat="message in $ctrl.employee.errors.name">{{message}}</p>
   </div>
 
+  <div class="form-group row" ng-hide="$ctrl.employee.isNew()">
+    <div class="col-md-6">
+      <strong>Created at:</strong>
+      {{ $ctrl.employee.createdAt | date:'medium' }}
+    </div>
+    <div class="col-md-6">
+      <strong>Updated at:</strong>
+      {{ $ctrl.employee.updatedAt | date:'medium' }}
+    </div>
+  </div>
+
   <div class="form-buttons">
     <button class="btn btn-primary"
       type="submit"

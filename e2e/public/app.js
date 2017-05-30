@@ -35,6 +35,8 @@
 
       this.attribute('id');
       this.attribute('name');
+      this.attribute('createdAt', 'date');
+      this.attribute('updatedAt', 'date');
 
       this.validates('name', {presence: true, message: 'Name is required'});
     }
@@ -43,10 +45,20 @@
   }
 
   function ListController(Employee) {
-    Employee.all()
-      .then(employees => {
-        this.employees = employees
-      });
+
+    this.delete = function (employee) {
+      employee.delete()
+        .then(() => this.load());
+    };
+
+    this.load = function () {
+      Employee.all()
+        .then(employees => {
+          this.employees = employees
+        });
+    };
+
+    this.load();
   }
 
   function EmployeeController($routeParams, Employee) {

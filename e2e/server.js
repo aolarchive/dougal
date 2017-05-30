@@ -52,6 +52,10 @@ api.route('/:id').put((req, res) => {
   employee.updatedAt = new Date().toISOString();
   res.send(JSON.stringify(employee));
 });
+api.route('/:id').delete((req, res) => {
+  _.remove(employees, ['id', req.params.id]);
+  res.send(true);
+});
 
 app.listen(port, () => {
   logger.debug(`Server running on port ${port}`);

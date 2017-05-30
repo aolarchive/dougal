@@ -1,4 +1,4 @@
 namespace Dougal.Config {
-  export const defaultStore: Store = undefined;
-  export const urlInterpolation = /:(\w+)/g;
+  export let defaultStore: Store = undefined;
+  export let urlInterpolation = /:(\w+)/g;
 }

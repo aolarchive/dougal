@@ -9,16 +9,6 @@ namespace Dougal {
   }
 
   export abstract class Model {
-    protected static all(ExtendedModel): Q.Promise<Model[]> {
-      let model: Model = new ExtendedModel();
-      return model.store.list(model.urlRoot)
-        .then((response) => {
-          return _.map(response, (data) => {
-            return new ExtendedModel().parse(data);
-          });
-        });
-    }
-
     static extends(constructor: Function) {
       let ExtendedModel: any = function ExtendedModel() {
         Model.apply(this, arguments);
@@ -33,19 +23,43 @@ namespace Dougal {
         return Model.all(ExtendedModel);
       };
 
-      ExtendedModel.find = function (id) {
-        return Model.find(id, ExtendedModel);
+      ExtendedModel.delete = function (criteria) {
+        return Model.delete(criteria, ExtendedModel);
+      };
+
+      ExtendedModel.find = function (criteria) {
+        return Model.find(criteria, ExtendedModel);
       };
 
       return ExtendedModel;
     }
 
-    protected static find(id: any, ExtendedModel): Q.Promise<Model> {
+    protected static all(ExtendedModel): Q.Promise<Model[]> {
       let model: Model = new ExtendedModel();
-      if (_.isObject(id)) {
-        model.set(id, {silent: true});
+      return model.store.list(model.urlRoot)
+        .then((response) => {
+          return _.map(response, (data) => {
+            return new ExtendedModel().parse(data);
+          });
+        });
+    }
+
+    protected static delete(criteria: any, ExtendedModel) {
+      let model: Model = new ExtendedModel();
+      if (_.isObject(criteria)) {
+        model.set(criteria);
       } else {
-        model.set(model.idAttribute, id, {silent: true});
+        model.set(model.idAttribute, criteria);
+      }
+      return model.delete();
+    }
+
+    protected static find(criteria: any, ExtendedModel): Q.Promise<Model> {
+      let model: Model = new ExtendedModel();
+      if (_.isObject(criteria)) {
+        model.set(criteria, {silent: true});
+      } else {
+        model.set(model.idAttribute, criteria, {silent: true});
       }
       return model.store.read(model)
         .then((data) => {
@@ -81,6 +95,10 @@ namespace Dougal {
       });
 
       this.serializes(name, type);
+    }
+
+    delete(): Q.Promise<any> {
+      return this.store.delete(this);
     }
 
     get(key: string): any {
@@ -160,7 +178,7 @@ namespace Dougal {
     }
 
     toJson(): Object {
-      var json = _.cloneDeep(this.attributes);
+      var json = _.clone(this.attributes);
       _.forEach(this.serializers, (serializer: Serialization.ISerializer, key: string) => {
         _.set(json, key, serializer.format(_.get(json, key)));
       });

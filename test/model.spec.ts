@@ -1,10 +1,14 @@
 namespace Dougal.Tests {
   describe('Dougal.Model', () => {
-    beforeAll(() => {
+    beforeEach(() => {
       LocalStore.items = [{
-        id: 1,
+        id: _.uniqueId(),
         name: 'John'
       }];
+    });
+
+    describe('extends', () => {
+      // TODO
     });
 
     describe('static methods', () => {
@@ -19,8 +23,16 @@ namespace Dougal.Tests {
         });
       });
 
-      describe('extends', () => {
-        // TODO
+      describe('delete', () => {
+        it('should delete a model', function (done) {
+          let employee = _.head(LocalStore.items);
+          Employee.delete(employee)
+            .then(() => {
+              expect(_.includes(LocalStore.items, employee)).toBe(false);
+            })
+            .catch(() => done.fail('deletion failed'))
+            .finally(done);
+        });
       });
 
       describe('find', () => {
@@ -63,6 +75,18 @@ namespace Dougal.Tests {
         employee = new Employee();
       });
 
+      describe('delete', () => {
+        it('should delete the model', (done) => {
+          let employee = new Employee(_.head(LocalStore.items));
+          employee.delete()
+            .then(() => {
+              expect(_.includes(LocalStore.items, employee)).toBe(false);
+            })
+            .catch(() => done.fail('deletion failed'))
+            .finally(done);
+        });
+      });
+
       describe('id', () => {
         it('should surface the ID', () => {
           employee.id = 123;
@@ -86,6 +110,7 @@ namespace Dougal.Tests {
       describe('save', () => {
         it('should reject if validations fail', (done) => {
           employee.save()
+            .then(() => done.fail('save test failed'))
             .catch((errors) => {
               expect(errors.name).toEqual(['Name is required']);
             })
@@ -93,11 +118,33 @@ namespace Dougal.Tests {
         });
 
         it('should allow to skip validation', () => {
-          spyOn(employee.store, 'create').and.returnValue(q.when());
+          employee.id = 1;
           spyOn(employee, 'validate');
           employee.save({validate: false});
-          expect(employee.store.create).toHaveBeenCalled();
+          expect(employee.store.update).toHaveBeenCalled();
           expect(employee.validate).not.toHaveBeenCalled();
+        });
+
+        it('should create if the model is new', (done) => {
+          employee.name = 'valid name';
+          employee.save()
+            .then(() => {
+              expect(_.isNumber(employee.id)).toBe(true);
+              expect(_.omit(_.last(LocalStore.items), 'id')).toEqual({
+                name: 'valid name',
+                birthdate: undefined
+              });
+            })
+            .catch(() => done.fail('creation failed'))
+            .finally(done);
+        });
+
+        it('should update if the model is not new', () => {
+          employee.id = 123;
+          employee.name = 'valid name';
+          employee.save();
+          expect(employee.store.create).not.toHaveBeenCalled();
+          expect(employee.store.update).toHaveBeenCalledWith(employee);
         });
       });
 
