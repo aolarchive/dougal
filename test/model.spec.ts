@@ -24,9 +24,19 @@ namespace Dougal.Tests {
       });
 
       describe('delete', () => {
-        it('should delete a model', function (done) {
+        it('should delete a model by ID', function (done) {
           let employee = _.head(LocalStore.items);
-          Employee.delete(employee)
+          Employee.delete(employee.id)
+            .then(() => {
+              expect(_.includes(LocalStore.items, employee)).toBe(false);
+            })
+            .catch(() => done.fail('deletion failed'))
+            .finally(done);
+        });
+
+        it('should delete a model by attributes', function (done) {
+          let employee = _.head(LocalStore.items);
+          Employee.delete({id: employee.id})
             .then(() => {
               expect(_.includes(LocalStore.items, employee)).toBe(false);
             })
@@ -37,22 +47,24 @@ namespace Dougal.Tests {
 
       describe('find', () => {
         it('should find a model by ID', (done) => {
-          Employee.find(1)
+          Employee.find(_.head(LocalStore.items).id)
             .then((employee) => {
               expect(employee instanceof Employee).toBe(true);
-              expect(employee.id).toBe(1);
+              expect(_.isNumber(employee.id)).toBe(true);
               expect(employee.name).toBe('John');
               expect(employee.changed).toEqual({});
             })
+            .catch(() => done.fail('find failed'))
             .finally(done);
         });
 
         it('should allow to pass complex objects', (done) => {
-          Employee.find({id: 1})
+          Employee.find(_.head(LocalStore.items))
             .then((employee) => {
               expect(employee instanceof Employee).toBe(true);
-              expect(employee.id).toBe(1);
+              expect(_.isNumber(employee.id)).toBe(true);
             })
+            .catch(() => done.fail('find failed'))
             .finally(done);
         });
 

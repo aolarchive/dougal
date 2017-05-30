@@ -19,6 +19,9 @@ namespace Dougal {
         constructor: ExtendedModel
       });
 
+      Object.defineProperty(ExtendedModel.prototype, 'id',
+        Object.getOwnPropertyDescriptor(Model.prototype, 'id'));
+
       ExtendedModel.all = function () {
         return Model.all(ExtendedModel);
       };
@@ -85,14 +88,16 @@ namespace Dougal {
     }
 
     attribute(name: string, type?: string): void {
-      Object.defineProperty(this, name, {
-        get: function () {
-          return this.get(name);
-        },
-        set: function (value) {
-          this.set(name, value);
-        }
-      });
+      if (name !== 'id') {
+        Object.defineProperty(this, name, {
+          get: function () {
+            return this.get(name);
+          },
+          set: function (value) {
+            this.set(name, value);
+          }
+        });
+      }
 
       this.serializes(name, type);
     }
@@ -111,6 +116,10 @@ namespace Dougal {
 
     get id() {
       return this.attributes[this.idAttribute];
+    }
+
+    set id(value) {
+      this.attributes[this.idAttribute] = value;
     }
 
     isNew(): boolean {
