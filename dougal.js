@@ -12,7 +12,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var Dougal;
 (function (Dougal) {
-    Dougal.Version = '0.1.3';
+    Dougal.Version = '0.2.0';
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
@@ -79,6 +79,26 @@ var Dougal;
             this.validators = [];
             this.set(attributes, { silent: true });
         }
+        Model.extends = function (constructor) {
+            var ExtendedModel = function ExtendedModel() {
+                Model.apply(this, arguments);
+                constructor.apply(this, arguments);
+            };
+            ExtendedModel.prototype = Object.create(Model.prototype, {
+                constructor: ExtendedModel
+            });
+            Object.defineProperty(ExtendedModel.prototype, 'id', Object.getOwnPropertyDescriptor(Model.prototype, 'id'));
+            ExtendedModel.all = function () {
+                return Model.all(ExtendedModel);
+            };
+            ExtendedModel.delete = function (criteria) {
+                return Model.delete(criteria, ExtendedModel);
+            };
+            ExtendedModel.find = function (criteria) {
+                return Model.find(criteria, ExtendedModel);
+            };
+            return ExtendedModel;
+        };
         Model.all = function (ExtendedModel) {
             var model = new ExtendedModel();
             return model.store.list(model.urlRoot)
@@ -88,29 +108,23 @@ var Dougal;
                 });
             });
         };
-        Model.extends = function (constructor) {
-            var ExtendedModel = function ExtendedModel() {
-                Model.apply(this, arguments);
-                constructor.apply(this, arguments);
-            };
-            ExtendedModel.prototype = Object.create(Model.prototype, {
-                constructor: ExtendedModel
-            });
-            ExtendedModel.all = function () {
-                return Model.all(ExtendedModel);
-            };
-            ExtendedModel.find = function (id) {
-                return Model.find(id, ExtendedModel);
-            };
-            return ExtendedModel;
-        };
-        Model.find = function (id, ExtendedModel) {
+        Model.delete = function (criteria, ExtendedModel) {
             var model = new ExtendedModel();
-            if (_.isObject(id)) {
-                model.set(id, { silent: true });
+            if (_.isObject(criteria)) {
+                model.set(criteria);
             }
             else {
-                model.set(model.idAttribute, id, { silent: true });
+                model.set(model.idAttribute, criteria);
+            }
+            return model.delete();
+        };
+        Model.find = function (criteria, ExtendedModel) {
+            var model = new ExtendedModel();
+            if (_.isObject(criteria)) {
+                model.set(criteria, { silent: true });
+            }
+            else {
+                model.set(model.idAttribute, criteria, { silent: true });
             }
             return model.store.read(model)
                 .then(function (data) {
@@ -122,14 +136,16 @@ var Dougal;
             });
         };
         Model.prototype.attribute = function (name, type) {
-            Object.defineProperty(this, name, {
-                get: function () {
-                    return this.get(name);
-                },
-                set: function (value) {
-                    this.set(name, value);
-                }
-            });
+            if (name !== 'id') {
+                Object.defineProperty(this, name, {
+                    get: function () {
+                        return this.get(name);
+                    },
+                    set: function (value) {
+                        this.set(name, value);
+                    }
+                });
+            }
             this.serializes(name, type);
         };
         Model.prototype.delete = function () {
@@ -144,6 +160,9 @@ var Dougal;
         Object.defineProperty(Model.prototype, "id", {
             get: function () {
                 return this.attributes[this.idAttribute];
+            },
+            set: function (value) {
+                this.attributes[this.idAttribute] = value;
             },
             enumerable: true,
             configurable: true
@@ -207,7 +226,7 @@ var Dougal;
             this.validate();
         };
         Model.prototype.toJson = function () {
-            var json = _.cloneDeep(this.attributes);
+            var json = _.clone(this.attributes);
             _.forEach(this.serializers, function (serializer, key) {
                 _.set(json, key, serializer.format(_.get(json, key)));
             });
