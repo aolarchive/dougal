@@ -1,8 +1,12 @@
 namespace Dougal.Tests {
   export class Employee extends Model {
-    // JS generator provides this static function
+    // JS generator provides these static functions
     static all(): Q.Promise<Employee[]> {
       return Model.all(Employee) as Q.Promise<Employee[]>;
+    }
+
+    static delete(criteria: any): Q.Promise<any> {
+      return Model.delete(criteria, Employee) as Q.Promise<any>;
     }
 
     static find(id: any): Q.Promise<Employee> {

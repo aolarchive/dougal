@@ -1,0 +1,20 @@
+<h2>Employees <a href="/#!/create" class="btn btn-primary">Create</a></h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th width="100">ID</th>
+      <th>Name</th>
+      <th width="150"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="employee in $ctrl.employees">
+      <td>{{ employee.id }}</td>
+      <td>{{ employee.name }}</td>
+      <td>
+        <a class="btn btn-default btn-xs" ng-href="/#!/{{employee.id}}">Edit</a>
+        <a class="btn btn-danger btn-xs" ng-href="" ng-click="$ctrl.delete(employee)">Delete</a>
+      </td>
+    </tr>
+  </tbody>
+</table>

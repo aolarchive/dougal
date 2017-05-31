@@ -1,0 +1,30 @@
+<form ng-submit="$ctrl.save()">
+  <h2 ng-show="$ctrl.isNew()">New Employee</h2>
+  <h2 ng-show="!$ctrl.isNew()">Update Employee</h2>
+  <a href="/#!/">Back to list</a>
+
+  <div class="form-group" ng-class="{'has-error': !!$ctrl.employee.errors.name.length}">
+    <label>Name</label>
+    <input class="form-control" type="text" ng-model="$ctrl.employee.name" />
+    <p class="help-block" ng-repeat="message in $ctrl.employee.errors.name">{{message}}</p>
+  </div>
+
+  <div class="form-group row" ng-hide="$ctrl.employee.isNew()">
+    <div class="col-md-6">
+      <strong>Created at:</strong>
+      {{ $ctrl.employee.createdAt | date:'medium' }}
+    </div>
+    <div class="col-md-6">
+      <strong>Updated at:</strong>
+      {{ $ctrl.employee.updatedAt | date:'medium' }}
+    </div>
+  </div>
+
+  <div class="form-buttons">
+    <button class="btn btn-primary"
+      type="submit"
+      ng-disabled="!$ctrl.employee.isValid()"
+      ng-bind="$ctrl.employee.isNew() ? 'Create' : 'Save'">
+    </button>
+  </div>
+</form>

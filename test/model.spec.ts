@@ -1,10 +1,14 @@
 namespace Dougal.Tests {
   describe('Dougal.Model', () => {
-    beforeAll(() => {
+    beforeEach(() => {
       LocalStore.items = [{
-        id: 1,
+        id: _.uniqueId(),
         name: 'John'
       }];
+    });
+
+    describe('extends', () => {
+      // TODO
     });
 
     describe('static methods', () => {
@@ -19,28 +23,48 @@ namespace Dougal.Tests {
         });
       });
 
-      describe('extends', () => {
-        // TODO
+      describe('delete', () => {
+        it('should delete a model by ID', function (done) {
+          let employee = _.head(LocalStore.items);
+          Employee.delete(employee.id)
+            .then(() => {
+              expect(_.includes(LocalStore.items, employee)).toBe(false);
+            })
+            .catch(() => done.fail('deletion failed'))
+            .finally(done);
+        });
+
+        it('should delete a model by attributes', function (done) {
+          let employee = _.head(LocalStore.items);
+          Employee.delete({id: employee.id})
+            .then(() => {
+              expect(_.includes(LocalStore.items, employee)).toBe(false);
+            })
+            .catch(() => done.fail('deletion failed'))
+            .finally(done);
+        });
       });
 
       describe('find', () => {
         it('should find a model by ID', (done) => {
-          Employee.find(1)
+          Employee.find(_.head(LocalStore.items).id)
             .then((employee) => {
               expect(employee instanceof Employee).toBe(true);
-              expect(employee.id).toBe(1);
+              expect(_.isNumber(employee.id)).toBe(true);
               expect(employee.name).toBe('John');
               expect(employee.changed).toEqual({});
             })
+            .catch(() => done.fail('find failed'))
             .finally(done);
         });
 
         it('should allow to pass complex objects', (done) => {
-          Employee.find({id: 1})
+          Employee.find(_.head(LocalStore.items))
             .then((employee) => {
               expect(employee instanceof Employee).toBe(true);
-              expect(employee.id).toBe(1);
+              expect(_.isNumber(employee.id)).toBe(true);
             })
+            .catch(() => done.fail('find failed'))
             .finally(done);
         });
 
@@ -61,6 +85,18 @@ namespace Dougal.Tests {
       let employee: Employee;
       beforeEach(() => {
         employee = new Employee();
+      });
+
+      describe('delete', () => {
+        it('should delete the model', (done) => {
+          let employee = new Employee(_.head(LocalStore.items));
+          employee.delete()
+            .then(() => {
+              expect(_.includes(LocalStore.items, employee)).toBe(false);
+            })
+            .catch(() => done.fail('deletion failed'))
+            .finally(done);
+        });
       });
 
       describe('id', () => {
@@ -86,6 +122,7 @@ namespace Dougal.Tests {
       describe('save', () => {
         it('should reject if validations fail', (done) => {
           employee.save()
+            .then(() => done.fail('save test failed'))
             .catch((errors) => {
               expect(errors.name).toEqual(['Name is required']);
             })
@@ -93,11 +130,33 @@ namespace Dougal.Tests {
         });
 
         it('should allow to skip validation', () => {
-          spyOn(employee.store, 'create').and.returnValue(q.when());
+          employee.id = 1;
           spyOn(employee, 'validate');
           employee.save({validate: false});
-          expect(employee.store.create).toHaveBeenCalled();
+          expect(employee.store.update).toHaveBeenCalled();
           expect(employee.validate).not.toHaveBeenCalled();
+        });
+
+        it('should create if the model is new', (done) => {
+          employee.name = 'valid name';
+          employee.save()
+            .then(() => {
+              expect(_.isNumber(employee.id)).toBe(true);
+              expect(_.omit(_.last(LocalStore.items), 'id')).toEqual({
+                name: 'valid name',
+                birthdate: undefined
+              });
+            })
+            .catch(() => done.fail('creation failed'))
+            .finally(done);
+        });
+
+        it('should update if the model is not new', () => {
+          employee.id = 123;
+          employee.name = 'valid name';
+          employee.save();
+          expect(employee.store.create).not.toHaveBeenCalled();
+          expect(employee.store.update).toHaveBeenCalledWith(employee);
         });
       });
 
