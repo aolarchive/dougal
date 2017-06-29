@@ -8,6 +8,46 @@ const app = express();
 const api = express.Router();
 const port = 8080;
 
+class EmployeesController {
+  constructor() {
+    this.employees = [];
+  }
+
+  list() {
+    return _.orderBy(this.employees, ['updatedAt'], ['desc']);
+  }
+
+  show(id) {
+    return this.find(id);
+  }
+
+  create(data) {
+    let now = new Date().toISOString();
+    let newEmployee = _.assign({
+      id: _.uniqueId(),
+      createdAt: now,
+      updatedAt: now
+    }, data);
+    this.employees.push(newEmployee);
+    return newEmployee;
+  }
+
+  update(id, data) {
+    let employee = this.find(id);
+    _.assign(employee, _.omit(data, ['id', 'createdAt', 'updatedAt']));
+    employee.updatedAt = new Date().toISOString();
+  }
+
+  delete(id) {
+    _.remove(this.employees, ['id', req.params.id]);
+    return true;
+  }
+
+  find(id) {
+    return _.find(this.employees, ['id', id]);
+  }
+}
+
 app.use(bodyParser.json());
 
 const staticFiles = [
@@ -27,34 +67,22 @@ app.use(express.static('node_modules'));
 
 app.use('/api/employees', api);
 
-let employees = [];
+let controller = new EmployeesController();
 
 api.route('/').get((req, res) => {
-  res.send(_.orderBy(employees, ['updatedAt'], ['desc']));
+  res.send(JSON.stringify(controller.list()));
 });
 api.route('/').post((req, res) => {
-  let now = new Date().toISOString();
-  let newEmployee = _.assign({
-    id: _.uniqueId(),
-    createdAt: now,
-    updatedAt: now
-  }, req.body);
-  employees.push(newEmployee);
-  res.send(JSON.stringify(newEmployee));
+  res.send(JSON.stringify(controller.create(req.body)));
 });
 api.route('/:id').get((req, res) => {
-  let employee = _.find(employees, ['id', req.params.id]);
-  res.send(JSON.stringify(employee));
+  res.send(JSON.stringify(controller.show(req.params.id)));
 });
 api.route('/:id').put((req, res) => {
-  let employee = _.find(employees, ['id', req.params.id]);
-  _.assign(employee, _.omit(req.body, ['id', 'createdAt', 'updatedAt']));
-  employee.updatedAt = new Date().toISOString();
-  res.send(JSON.stringify(employee));
+  res.send(JSON.stringify(controller.update(req.params.id, req.body)));
 });
 api.route('/:id').delete((req, res) => {
-  _.remove(employees, ['id', req.params.id]);
-  res.send(true);
+  res.send(JSON.stringify(controller.delete(req.params.id)));
 });
 
 app.listen(port, () => {

@@ -45,7 +45,6 @@
   }
 
   function ListController(Employee) {
-
     this.delete = function (employee) {
       employee.delete()
         .then(() => this.load());
