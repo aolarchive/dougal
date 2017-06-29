@@ -1,7 +1,9 @@
 # Dougal
 
-[![Build Status](https://travis-ci.org/aol/dougal.svg?branch=master)](https://travis-ci.org/aol/dougal)
-[![Coverage Status](https://coveralls.io/repos/github/aol/dougal/badge.svg)](https://coveralls.io/github/aol/dougal)
+[![Build Status](https://img.shields.io/travis/aol/dougal.svg?style=flat-square)](https://travis-ci.org/aol/dougal)
+[![Coverage Status](https://img.shields.io/coveralls/aol/dougal.svg?style=flat-square)](https://coveralls.io/github/aol/dougal)
+![npm](https://img.shields.io/npm/v/dougal.svg?style=flat-square)
+![Bower](https://img.shields.io/bower/v/dougal.svg?style=flat-square)
 
 The M of MVC, for Javascript VC frameworks that lack a decent M.
 
