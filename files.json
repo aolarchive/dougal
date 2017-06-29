@@ -3,6 +3,7 @@
   "lib/config.ts",
   "lib/q.ts",
   "lib/decorators/extendable.ts",
+  "lib/decorators/extendedModel.ts",
   "lib/model.ts",
   "lib/serializer.ts",
   "lib/store.ts",

@@ -1,18 +1,6 @@
 namespace Dougal.Tests {
+  @ExtendedModel
   export class Employee extends Model {
-    // JS generator provides these static functions
-    static all(): Q.Promise<Employee[]> {
-      return Model.all(Employee) as Q.Promise<Employee[]>;
-    }
-
-    static delete(criteria: any): Q.Promise<any> {
-      return Model.delete(criteria, Employee) as Q.Promise<any>;
-    }
-
-    static find(id: any): Q.Promise<Employee> {
-      return Model.find(id, Employee) as Q.Promise<Employee>;
-    }
-
     store = new LocalStore();
     urlRoot = '/employees';
 

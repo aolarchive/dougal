@@ -1,9 +1,14 @@
 (function (Dougal) { 'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -68,6 +73,23 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
+    function ExtendedModel(NewModel) {
+        NewModel.all = function () {
+            return Dougal.Model._all(NewModel);
+        };
+        NewModel.delete = function (criteria) {
+            return Dougal.Model._delete(criteria, NewModel);
+        };
+        NewModel.find = function (id) {
+            return Dougal.Model._find(id, NewModel);
+        };
+        Object.defineProperty(NewModel.prototype, 'id', Object.getOwnPropertyDescriptor(Dougal.Model.prototype, 'id'));
+        return NewModel;
+    }
+    Dougal.ExtendedModel = ExtendedModel;
+})(Dougal || (Dougal = {}));
+var Dougal;
+(function (Dougal) {
     var Model = (function () {
         function Model(attributes) {
             this.attributes = {};
@@ -80,26 +102,19 @@ var Dougal;
             this.set(attributes, { silent: true });
         }
         Model.extends = function (constructor) {
-            var ExtendedModel = function ExtendedModel() {
+            var NewModel = function NewModel() {
                 Model.apply(this, arguments);
                 constructor.apply(this, arguments);
             };
-            ExtendedModel.prototype = Object.create(Model.prototype, {
-                constructor: ExtendedModel
+            NewModel.prototype = Object.create(Model.prototype, {
+                constructor: NewModel
             });
-            Object.defineProperty(ExtendedModel.prototype, 'id', Object.getOwnPropertyDescriptor(Model.prototype, 'id'));
-            ExtendedModel.all = function () {
-                return Model.all(ExtendedModel);
-            };
-            ExtendedModel.delete = function (criteria) {
-                return Model.delete(criteria, ExtendedModel);
-            };
-            ExtendedModel.find = function (criteria) {
-                return Model.find(criteria, ExtendedModel);
-            };
-            return ExtendedModel;
+            return Dougal.ExtendedModel(NewModel);
         };
-        Model.all = function (ExtendedModel) {
+        Model.all = function () {
+            throw new Error('Not yet implemented, use Model.extends instead');
+        };
+        Model._all = function (ExtendedModel) {
             var model = new ExtendedModel();
             return model.store.list(model.urlRoot)
                 .then(function (response) {
@@ -108,7 +123,10 @@ var Dougal;
                 });
             });
         };
-        Model.delete = function (criteria, ExtendedModel) {
+        Model.delete = function (criteria) {
+            throw new Error('Not yet implemented, use Model.extends instead');
+        };
+        Model._delete = function (criteria, ExtendedModel) {
             var model = new ExtendedModel();
             if (_.isObject(criteria)) {
                 model.set(criteria);
@@ -118,7 +136,10 @@ var Dougal;
             }
             return model.delete();
         };
-        Model.find = function (criteria, ExtendedModel) {
+        Model.find = function (criteria) {
+            throw new Error('Not yet implemented, use Model.extends instead');
+        };
+        Model._find = function (criteria, ExtendedModel) {
             var model = new ExtendedModel();
             if (_.isObject(criteria)) {
                 model.set(criteria, { silent: true });
@@ -306,10 +327,11 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    var Validator = Validator_1 = (function () {
+    var Validator = (function () {
         function Validator(options) {
             this.options = options;
         }
+        Validator_1 = Validator;
         Validator.simple = function (validate) {
             return (function (_super) {
                 __extends(AnonymousValidator, _super);
@@ -329,13 +351,13 @@ var Dougal;
             enumerable: true,
             configurable: true
         });
+        Validator = Validator_1 = __decorate([
+            Dougal.Extendable
+        ], Validator);
         return Validator;
+        var Validator_1;
     }());
-    Validator = Validator_1 = __decorate([
-        Dougal.Extendable
-    ], Validator);
     Dougal.Validator = Validator;
-    var Validator_1;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {

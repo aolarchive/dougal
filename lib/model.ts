@@ -10,34 +10,22 @@ namespace Dougal {
 
   export abstract class Model {
     static extends(constructor: Function) {
-      let ExtendedModel: any = function ExtendedModel() {
+      let NewModel: any = function NewModel() {
         Model.apply(this, arguments);
         constructor.apply(this, arguments);
       }
 
-      ExtendedModel.prototype = Object.create(Model.prototype, {
-        constructor: ExtendedModel
+      NewModel.prototype = Object.create(Model.prototype, {
+        constructor: NewModel
       });
 
-      Object.defineProperty(ExtendedModel.prototype, 'id',
-        Object.getOwnPropertyDescriptor(Model.prototype, 'id'));
-
-      ExtendedModel.all = function () {
-        return Model.all(ExtendedModel);
-      };
-
-      ExtendedModel.delete = function (criteria) {
-        return Model.delete(criteria, ExtendedModel);
-      };
-
-      ExtendedModel.find = function (criteria) {
-        return Model.find(criteria, ExtendedModel);
-      };
-
-      return ExtendedModel;
+      return ExtendedModel(NewModel);
     }
 
-    protected static all(ExtendedModel): Q.Promise<Model[]> {
+    public static all(): Q.Promise<Model[]> {
+      throw new Error('Not yet implemented, use Model.extends instead');
+    }
+    protected static _all(ExtendedModel): Q.Promise<Model[]> {
       let model: Model = new ExtendedModel();
       return model.store.list(model.urlRoot)
         .then((response) => {
@@ -47,7 +35,10 @@ namespace Dougal {
         });
     }
 
-    protected static delete(criteria: any, ExtendedModel) {
+    public static delete(criteria: any): Q.Promise<any> {
+      throw new Error('Not yet implemented, use Model.extends instead');
+    }
+    protected static _delete(criteria: any, ExtendedModel): Q.Promise<any> {
       let model: Model = new ExtendedModel();
       if (_.isObject(criteria)) {
         model.set(criteria);
@@ -57,7 +48,10 @@ namespace Dougal {
       return model.delete();
     }
 
-    protected static find(criteria: any, ExtendedModel): Q.Promise<Model> {
+    public static find(criteria: any): Q.Promise<Model> {
+      throw new Error('Not yet implemented, use Model.extends instead');
+    }
+    protected static _find(criteria: any, ExtendedModel): Q.Promise<Model> {
       let model: Model = new ExtendedModel();
       if (_.isObject(criteria)) {
         model.set(criteria, {silent: true});

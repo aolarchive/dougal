@@ -8,7 +8,21 @@ namespace Dougal.Tests {
     });
 
     describe('extends', () => {
-      // TODO
+      it('should create a Model subclass', () => {
+        let Employee = Model.extends(function () {
+          this.thing = 'something';
+        });
+        expect(Employee).toBeDefined();
+        _.each(['all', 'delete', 'find'], method => {
+          expect(Employee[method]).toBeDefined();
+        });
+
+        let employee = new Employee();
+        expect(employee).toBeDefined();
+        expect(employee instanceof Model).toBe(true);
+        expect(employee instanceof Employee).toBe(true);
+        expect(employee.thing).toEqual('something');
+      });
     });
 
     describe('static methods', () => {

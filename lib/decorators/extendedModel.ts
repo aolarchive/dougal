@@ -1,0 +1,20 @@
+namespace Dougal {
+  export function ExtendedModel(NewModel) {
+    NewModel.all = function (): Q.Promise<Model[]> {
+      return Model._all(NewModel);
+    };
+
+    NewModel.delete = function (criteria: any): Q.Promise<any> {
+      return Model._delete(criteria, NewModel);
+    };
+
+    NewModel.find = function (id): Q.Promise<Model> {
+      return Model._find(id, NewModel);
+    };
+
+    Object.defineProperty(NewModel.prototype, 'id',
+      Object.getOwnPropertyDescriptor(Model.prototype, 'id'));
+
+    return NewModel;
+  }
+}
