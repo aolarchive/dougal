@@ -11,6 +11,6 @@ namespace Dougal {
       });
 
       return Extended;
-    }
+    };
   }
 }

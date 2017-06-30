@@ -13,7 +13,7 @@ namespace Dougal.Tests {
           this.thing = 'something';
         });
         expect(Employee).toBeDefined();
-        _.each(['all', 'delete', 'find'], method => {
+        _.each(['all', 'delete', 'find'], (method) => {
           expect(Employee[method]).toBeDefined();
         });
 

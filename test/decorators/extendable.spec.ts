@@ -12,7 +12,7 @@ namespace Dougal {
         this.additionalProperty = 'some new value';
       });
     });
-    
+
     it('should allow to extend the class', () => {
       expect(SomeClass.extends).toBeDefined();
       expect(ExtendedClass).toBeDefined();

@@ -298,7 +298,10 @@ var Dougal;
         Serialization.register = register;
         function resolve(serializer) {
             return (_.isString(serializer) ? get(serializer) : serializer)
-                || { format: _.identity, parse: _.identity };
+                || {
+                    format: _.identity,
+                    parse: _.identity
+                };
         }
         Serialization.resolve = resolve;
         var DateSerializer = {

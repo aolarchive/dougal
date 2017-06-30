@@ -18,7 +18,10 @@ namespace Dougal {
 
     export function resolve(serializer: Serializer): ISerializer {
       return (_.isString(serializer) ? get(serializer) : serializer)
-        || { format: _.identity, parse: _.identity };
+        || {
+          format: _.identity,
+          parse: _.identity
+        };
     }
 
     const DateSerializer: ISerializer = {
@@ -31,7 +34,7 @@ namespace Dougal {
       parse(value: any): Date {
         return new Date(value);
       }
-    }
+    };
 
     register('date', DateSerializer);
 
@@ -41,7 +44,7 @@ namespace Dougal {
       parse(value: any): Number {
         return parseFloat(value);
       }
-    }
+    };
 
     register('number', NumberSerializer);
   }

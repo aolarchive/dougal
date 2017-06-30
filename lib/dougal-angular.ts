@@ -53,7 +53,7 @@
           return response.data;
         });
       }
-    }
+    };
   }
 
   angular.module('dougal', [])
@@ -63,5 +63,4 @@
       Dougal.Config.defaultStore = new $httpStore();
       Dougal.q = $q;
     }]);
-
 })(window['angular'], window['Dougal']);

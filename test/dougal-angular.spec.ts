@@ -2,7 +2,7 @@
 
 namespace Dougal.Tests.Angular {
   describe('dougal-angular', () => {
-    var Dougal;
+    let Dougal;
 
     beforeEach(module('dougal'));
     beforeEach(inject(($injector) => {
@@ -114,6 +114,5 @@ namespace Dougal.Tests.Angular {
         $httpBackend.flush();
       });
     });
-
   });
 }

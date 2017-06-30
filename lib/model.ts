@@ -13,7 +13,7 @@ namespace Dougal {
       let NewModel: any = function NewModel() {
         Model.apply(this, arguments);
         constructor.apply(this, arguments);
-      }
+      };
 
       NewModel.prototype = Object.create(Model.prototype, {
         constructor: NewModel
@@ -125,7 +125,7 @@ namespace Dougal {
     }
 
     parse(response: Object): Model {
-      var data = _.clone(response);
+      let data = _.clone(response);
       _.forEach(this.serializers, (serializer: Serialization.ISerializer, key: string) => {
         _.set(data, key, serializer.parse(_.get(data, key)));
       });
@@ -181,7 +181,7 @@ namespace Dougal {
     }
 
     toJson(): Object {
-      var json = _.clone(this.attributes);
+      let json = _.clone(this.attributes);
       _.forEach(this.serializers, (serializer: Serialization.ISerializer, key: string) => {
         _.set(json, key, serializer.format(_.get(json, key)));
       });

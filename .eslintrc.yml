@@ -1,0 +1,16 @@
+extends: 'google'
+parser: 'typescript-eslint-parser'
+plugins:
+  - jasmine
+
+rules:
+  'comma-dangle': ['off']
+  'max-len': ['error', 120]
+  'new-cap': ['off'] # in conflict with TypeScript annotations
+  'no-invalid-this': ['off']
+  'no-unused-vars': ['off'] # in conflict with TypeScript exports
+  'prefer-rest-params': ['off']
+  'prefer-spread': ['off']
+  'require-jsdoc': ['off']
+  'space-before-function-paren': ['off']
+  'spaced-comment': ['off'] # in conflict with TypeScript references

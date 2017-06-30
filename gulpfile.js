@@ -1,5 +1,6 @@
 const gulp        = require('gulp');
 const concat      = require('gulp-concat');
+const eslint      = require('gulp-eslint');
 const liveServer  = require('gulp-live-server');
 const replace     = require('gulp-string-replace');
 const watch       = require('gulp-watch');
@@ -30,6 +31,13 @@ gulp.task('dist:angular', () => {
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(concat('dougal-angular.js'))
     .pipe(gulp.dest('.'));
+});
+
+gulp.task('lint', () => {
+  return gulp.src(['**/*.ts', '!node_modules/**/*.ts'])
+    .pipe(eslint({configFile: '.eslintrc.yml'}))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
 // e2e tasks

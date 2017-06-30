@@ -6,7 +6,6 @@ namespace Dougal.Validations {
   }
 
   export class LengthValidator extends Validator {
-
     constructor(options?: IValidatorOptions) {
       super(options);
     }

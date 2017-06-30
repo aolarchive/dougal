@@ -15,26 +15,26 @@ namespace Dougal.Tests {
       expect(validate('')).toBe(false);
     });
 
-    it('should not allow values greater than', function () {
+    it('should not allow values greater than', () => {
       options.number = {greaterThan: 10};
       expect(validate('11')).toBe(true);
       expect(validate('10')).toBe(false);
     });
 
-    it('should not allow values greater than or equal to', function () {
+    it('should not allow values greater than or equal to', () => {
       options.number = {greaterThanOrEqualTo: 10};
       expect(validate('11')).toBe(true);
       expect(validate('10')).toBe(true);
       expect(validate('9')).toBe(false);
     });
 
-    it('should not allow values less than', function () {
+    it('should not allow values less than', () => {
       options.number = {lessThan: 10};
       expect(validate('9')).toBe(true);
       expect(validate('10')).toBe(false);
     });
 
-    it('should not allow values greater than or equal to', function () {
+    it('should not allow values greater than or equal to', () => {
       options.number = {lessThanOrEqualTo: 10};
       expect(validate('9')).toBe(true);
       expect(validate('10')).toBe(true);
