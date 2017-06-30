@@ -15,3 +15,7 @@ How to parse and format data for API consumption.
 ### [Validations](./validations.md)
 
 How to use Dougal built-in validations and create custom validators.
+
+### [Associations](./associations.md)
+
+How to establish links and fetch related models.

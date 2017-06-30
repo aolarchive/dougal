@@ -96,6 +96,21 @@ namespace Dougal {
       this.serializes(name, type);
     }
 
+    belongsTo(name, ParentModel) {
+      let getParent;
+      let attributeName = `${name}Id`;
+      if (!this.attributes[attributeName]) {
+        this.attribute(attributeName, 'number');
+      }
+      Object.defineProperty(this, name, {
+        get: () => {
+          // TODO handle undefined case
+          // TODO allow force-reload
+          return getParent || (getParent = ParentModel.find(this.get(attributeName)));
+        }
+      });
+    }
+
     delete(): Q.Promise<any> {
       return this.store.delete(this);
     }

@@ -101,6 +101,23 @@ namespace Dougal.Tests {
         employee = new Employee();
       });
 
+      describe('belongsTo', () => {
+        it('should allow fetch a model it belongs to', function (done) {
+          let manager = new Employee({name: 'Super Bob'});
+          manager.save();
+          employee.belongsTo('manager', Employee);
+          employee.managerId = manager.id;
+          employee.manager
+            .then((manager) => {
+              expect(manager).toBeDefined();
+              expect(manager instanceof Employee).toBe(true);
+              expect(manager.name).toEqual('Super Bob');
+            })
+            .catch(() => done.fail('find failed'))
+            .finally(done);
+        });
+      });
+
       describe('delete', () => {
         it('should delete the model', (done) => {
           let employee = new Employee(_.head(LocalStore.items));

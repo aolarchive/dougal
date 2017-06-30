@@ -169,6 +169,19 @@ var Dougal;
             }
             this.serializes(name, type);
         };
+        Model.prototype.belongsTo = function (name, ParentModel) {
+            var _this = this;
+            var getParent;
+            var attributeName = name + "Id";
+            if (!this.attributes[attributeName]) {
+                this.attribute(attributeName, 'number');
+            }
+            Object.defineProperty(this, name, {
+                get: function () {
+                    return getParent || (getParent = ParentModel.find(_this.get(attributeName)));
+                }
+            });
+        };
         Model.prototype.delete = function () {
             return this.store.delete(this);
         };
