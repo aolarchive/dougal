@@ -132,6 +132,24 @@ namespace Dougal.Tests {
         });
       });
 
+      describe('fetch', () => {
+        it('should fetch the data for a record', (done) => {
+          let id = _.head(LocalStore.items).id;
+          let employee = new Employee({id: id});
+          employee.fetch()
+            .then(() => {
+              expect(employee.isNew()).toBe(false);
+              expect(employee.toJson()).toEqual({
+                id: parseInt(id),
+                name: 'John',
+                birthdate: undefined
+              });
+            })
+            .catch((error) => done.fail(error))
+            .finally(done);
+        });
+      });
+
       describe('id', () => {
         it('should surface the ID', () => {
           employee.id = 123;

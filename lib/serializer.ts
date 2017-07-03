@@ -32,7 +32,7 @@ namespace Dougal {
       },
 
       parse(value: any): Date {
-        return new Date(value);
+        return _.isNil(value) ? value : new Date(value);
       }
     };
 

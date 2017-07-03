@@ -138,14 +138,7 @@ var Dougal;
             else {
                 model.set(model.idAttribute, criteria, { silent: true });
             }
-            return model.store.read(model)
-                .then(function (data) {
-                if (data) {
-                    model.parse(data);
-                    return model;
-                }
-                return Dougal.q.reject('Record Not Found');
-            });
+            return model.fetch();
         };
         Model.where = function (criteria) {
             throw new Error('Not yet implemented, use Model.extends instead');
@@ -175,6 +168,16 @@ var Dougal;
         };
         Model.prototype.delete = function () {
             return this.store.delete(this);
+        };
+        Model.prototype.fetch = function () {
+            var _this = this;
+            return this.store.read(this)
+                .then(function (data) {
+                if (data) {
+                    return _this.parse(data);
+                }
+                return Dougal.q.reject('Record Not Found');
+            });
         };
         Model.prototype.get = function (key) {
             return _.get(this.attributes, key);
@@ -315,7 +318,7 @@ var Dougal;
                     : value;
             },
             parse: function (value) {
-                return new Date(value);
+                return _.isNil(value) ? value : new Date(value);
             }
         };
         register('date', DateSerializer);

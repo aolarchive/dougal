@@ -55,14 +55,7 @@ namespace Dougal {
       } else {
         model.set(model.idAttribute, criteria, {silent: true});
       }
-      return model.store.read(model)
-        .then((data) => {
-          if (data) {
-            model.parse(data);
-            return model;
-          }
-          return q.reject('Record Not Found');
-        });
+      return model.fetch();
     }
 
     public static where(criteria: any): Q.Promise<Model[]> {
@@ -110,6 +103,16 @@ namespace Dougal {
 
     delete(): Q.Promise<any> {
       return this.store.delete(this);
+    }
+
+    fetch(): Q.Promise<Model> {
+      return this.store.read(this)
+        .then((data) => {
+          if (data) {
+            return this.parse(data);
+          }
+          return q.reject('Record Not Found');
+        });
     }
 
     get(key: string): any {
