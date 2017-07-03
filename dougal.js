@@ -30,13 +30,7 @@ var Dougal;
 var Dougal;
 (function (Dougal) {
     var Q = window['Q'];
-    function q(promise) {
-        var deferred = Q.defer();
-        promise(deferred.resolve, deferred.reject);
-        return deferred.promise;
-    }
-    Dougal.q = q;
-    ;
+    var q;
     (function (q) {
         function reject(error) {
             var deferred = Q.defer();
@@ -83,6 +77,9 @@ var Dougal;
         NewModel.find = function (id) {
             return Dougal.Model._find(id, NewModel);
         };
+        NewModel.where = function (criteria) {
+            return Dougal.Model._where(criteria, NewModel);
+        };
         Object.defineProperty(NewModel.prototype, 'id', Object.getOwnPropertyDescriptor(Dougal.Model.prototype, 'id'));
         return NewModel;
     }
@@ -115,13 +112,7 @@ var Dougal;
             throw new Error('Not yet implemented, use Model.extends instead');
         };
         Model._all = function (ExtendedModel) {
-            var model = new ExtendedModel();
-            return model.store.list(model.urlRoot)
-                .then(function (response) {
-                return _.map(response, function (data) {
-                    return new ExtendedModel().parse(data);
-                });
-            });
+            return Model._where({}, ExtendedModel);
         };
         Model.delete = function (criteria) {
             throw new Error('Not yet implemented, use Model.extends instead');
@@ -156,6 +147,19 @@ var Dougal;
                 return Dougal.q.reject('Record Not Found');
             });
         };
+        Model.where = function (criteria) {
+            throw new Error('Not yet implemented, use Model.extends instead');
+        };
+        Model._where = function (criteria, ExtendedModel) {
+            var model = new ExtendedModel();
+            return model.store.list(model.urlRoot, criteria)
+                .then(function (response) {
+                return _.map(response, function (data) {
+                    return new ExtendedModel().parse(data);
+                });
+            });
+        };
+        ;
         Model.prototype.attribute = function (name, type) {
             if (name !== 'id') {
                 Object.defineProperty(this, name, {

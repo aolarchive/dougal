@@ -3,6 +3,7 @@
 
   angular.module('dougal.e2e', ['dougal', 'ngRoute'])
     .config(setupRoutes)
+    .filter('gender', genderFilter)
     .factory('Employee', employeeFactory)
     .controller('EmployeeController', EmployeeController)
     .controller('ListController', ListController)
@@ -35,23 +36,27 @@
 
       this.attribute('id');
       this.attribute('name');
+      this.attribute('gender');
       this.attribute('createdAt', 'date');
       this.attribute('updatedAt', 'date');
 
       this.validates('name', {presence: true, message: 'Name is required'});
+      this.validates('gender', {presence: true, message: 'Gender is required'});
     }
 
     return Dougal.Model.extends(Employee);
   }
 
   function ListController(Employee) {
+    this.filters = {};
+
     this.delete = function (employee) {
       employee.delete()
         .then(() => this.load());
     };
 
     this.load = function () {
-      Employee.all()
+      Employee.where(_.omitBy(this.filters, _.isEmpty))
         .then(employees => {
           this.employees = employees
         });
@@ -70,6 +75,16 @@
 
     this.save = () => {
       this.employee.save();
+    };
+  }
+
+  function genderFilter() {
+    return function (gender) {
+      switch (gender) {
+        case 'F': return 'Female';
+        case 'M': return 'Male';
+        default: return '';
+      }
     };
   }
 

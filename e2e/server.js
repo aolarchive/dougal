@@ -11,10 +11,22 @@ const port = 8080;
 class EmployeesController {
   constructor() {
     this.employees = [];
+    _.each([
+      {name: 'John Doe', gender: 'M'},
+      {name: 'Jane Doe', gender: 'F'}
+    ], (data) => this.create(data));
   }
 
-  list() {
-    return _.orderBy(this.employees, ['updatedAt'], ['desc']);
+  list(query) {
+    return _(this.employees)
+      .filter((employee) => {
+        if (query.gender && employee.gender !== query.gender) {
+          return false;
+        }
+        return true;
+      })
+      .orderBy(['updatedAt'], ['desc'])
+      .value();
   }
 
   show(id) {
@@ -70,7 +82,7 @@ app.use('/api/employees', api);
 let controller = new EmployeesController();
 
 api.route('/').get((req, res) => {
-  res.send(JSON.stringify(controller.list()));
+  res.send(JSON.stringify(controller.list(req.query)));
 });
 api.route('/').post((req, res) => {
   res.send(JSON.stringify(controller.create(req.body)));

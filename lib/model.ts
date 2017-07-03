@@ -23,19 +23,15 @@ namespace Dougal {
     }
 
     public static all(): Q.Promise<Model[]> {
+      // Empty function, left for TypeScript typing
       throw new Error('Not yet implemented, use Model.extends instead');
     }
     protected static _all(ExtendedModel): Q.Promise<Model[]> {
-      let model: Model = new ExtendedModel();
-      return model.store.list(model.urlRoot)
-        .then((response) => {
-          return _.map(response, (data) => {
-            return new ExtendedModel().parse(data);
-          });
-        });
+      return Model._where({}, ExtendedModel);
     }
 
     public static delete(criteria: any): Q.Promise<any> {
+      // Empty function, left for TypeScript typing
       throw new Error('Not yet implemented, use Model.extends instead');
     }
     protected static _delete(criteria: any, ExtendedModel): Q.Promise<any> {
@@ -49,6 +45,7 @@ namespace Dougal {
     }
 
     public static find(criteria: any): Q.Promise<Model> {
+      // Empty function, left for TypeScript typing
       throw new Error('Not yet implemented, use Model.extends instead');
     }
     protected static _find(criteria: any, ExtendedModel): Q.Promise<Model> {
@@ -67,6 +64,21 @@ namespace Dougal {
           return q.reject('Record Not Found');
         });
     }
+
+    public static where(criteria: any): Q.Promise<Model[]> {
+      // Empty function, left for TypeScript typing
+      throw new Error('Not yet implemented, use Model.extends instead');
+    }
+    public static _where(criteria: any, ExtendedModel): Q.Promise<Model[]> {
+      let model = new ExtendedModel();
+      // TODO parameters in urlRoot
+      return model.store.list(model.urlRoot, criteria)
+        .then((response) => {
+          return _.map(response, (data) => {
+            return new ExtendedModel().parse(data);
+          });
+        });
+    };
 
     attributes: any = {};
     changed: any = {};

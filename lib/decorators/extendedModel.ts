@@ -12,6 +12,10 @@ namespace Dougal {
       return Model._find(id, NewModel);
     };
 
+    NewModel.where = function (criteria: any): Q.Promise<Model[]> {
+      return Model._where(criteria, NewModel);
+    };
+
     Object.defineProperty(NewModel.prototype, 'id',
       Object.getOwnPropertyDescriptor(Model.prototype, 'id'));
 

@@ -93,6 +93,25 @@ namespace Dougal.Tests {
             .finally(done);
         });
       });
+
+      describe('where', () => {
+        it('should fetch a list of models', (done) => {
+            Employee.where({name: 'John Doe'})
+              .then((Employees) => {
+                expect(Employees.length).toBe(1);
+                expect(Employees[0] instanceof Employee).toBe(true);
+              })
+              .finally(done);
+        });
+      });
+
+      describe('default unimplemented methods', () => {
+        _(['all', 'delete', 'find', 'where']).each((method) => {
+          it('should have a method stub', () => {
+            expect(() => (Model[method]())).toThrow();
+          });
+        });
+      });
     });
 
     describe('methods', () => {

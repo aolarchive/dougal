@@ -1,9 +1,22 @@
 <h2>Employees <a href="/#!/create" class="btn btn-primary">Create</a></h2>
+
+<form class="filter row">
+  <div class="form-group col-md-3">
+    <label>Gender</label>
+    <select class="form-control" ng-model="$ctrl.filters.gender" ng-change="$ctrl.load();">
+      <option value=""></option>
+      <option value="M">Male</option>
+      <option value="F">Female</option>
+    </select>
+  </div>
+</form>
+
 <table class="table">
   <thead>
     <tr>
       <th width="100">ID</th>
       <th>Name</th>
+      <th>Gender</th>
       <th width="150"></th>
     </tr>
   </thead>
@@ -11,6 +24,7 @@
     <tr ng-repeat="employee in $ctrl.employees">
       <td>{{ employee.id }}</td>
       <td>{{ employee.name }}</td>
+      <td>{{ employee.gender | gender }}</td>
       <td>
         <a class="btn btn-default btn-xs" ng-href="/#!/{{employee.id}}">Edit</a>
         <a class="btn btn-danger btn-xs" ng-href="" ng-click="$ctrl.delete(employee)">Delete</a>
