@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var Dougal;
 (function (Dougal) {
-    Dougal.Version = '0.2.0';
+    Dougal.Version = '0.3.0';
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
