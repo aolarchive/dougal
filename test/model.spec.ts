@@ -94,6 +94,13 @@ namespace Dougal.Tests {
         });
       });
 
+      describe('interpolate', () => {
+        it('should interpolate any URL', () => {
+          expect(Model.interpolate('/api/offices/:officeId/employees', {officeId: 111, something: 'else'}))
+            .toEqual('/api/offices/111/employees');
+        });
+      });
+
       describe('where', () => {
         it('should fetch a list of models', (done) => {
             Employee.where({name: 'John Doe'})

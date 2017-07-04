@@ -58,14 +58,19 @@ namespace Dougal {
       return model.fetch();
     }
 
+    protected static interpolate(url: string, attributes: any = {}): string {
+      return _.template(url, {
+        interpolate: Dougal.Config.urlInterpolation
+      })(attributes);
+    }
+
     public static where(criteria: any): Q.Promise<Model[]> {
       // Empty function, left for TypeScript typing
       throw new Error('Not yet implemented, use Model.extends instead');
     }
     public static _where(criteria: any, ExtendedModel): Q.Promise<Model[]> {
       let model = new ExtendedModel();
-      // TODO parameters in urlRoot
-      return model.store.list(model.urlRoot, criteria)
+      return model.store.list(Model.interpolate(model.urlRoot, criteria), criteria)
         .then((response) => {
           return _.map(response, (data) => {
             return new ExtendedModel().parse(data);
@@ -204,9 +209,7 @@ namespace Dougal {
     }
 
     url(): string {
-      let baseUrl = _.template(this.urlRoot, {
-        interpolate: Dougal.Config.urlInterpolation
-      })(this.attributes);
+      let baseUrl = Model.interpolate(this.urlRoot, this.attributes);
 
       if (this.isNew()) {
         return baseUrl;

@@ -140,12 +140,18 @@ var Dougal;
             }
             return model.fetch();
         };
+        Model.interpolate = function (url, attributes) {
+            if (attributes === void 0) { attributes = {}; }
+            return _.template(url, {
+                interpolate: Dougal.Config.urlInterpolation
+            })(attributes);
+        };
         Model.where = function (criteria) {
             throw new Error('Not yet implemented, use Model.extends instead');
         };
         Model._where = function (criteria, ExtendedModel) {
             var model = new ExtendedModel();
-            return model.store.list(model.urlRoot, criteria)
+            return model.store.list(Model.interpolate(model.urlRoot, criteria), criteria)
                 .then(function (response) {
                 return _.map(response, function (data) {
                     return new ExtendedModel().parse(data);
@@ -261,9 +267,7 @@ var Dougal;
             return json;
         };
         Model.prototype.url = function () {
-            var baseUrl = _.template(this.urlRoot, {
-                interpolate: Dougal.Config.urlInterpolation
-            })(this.attributes);
+            var baseUrl = Model.interpolate(this.urlRoot, this.attributes);
             if (this.isNew()) {
                 return baseUrl;
             }
