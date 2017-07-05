@@ -347,10 +347,6 @@ var Dougal;
 })(Dougal || (Dougal = {}));
 var Dougal;
 (function (Dougal) {
-    Dougal.TEMP = 'FIXME';
-})(Dougal || (Dougal = {}));
-var Dougal;
-(function (Dougal) {
     var Validator = (function () {
         function Validator(options) {
             this.options = options;

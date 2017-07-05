@@ -6,7 +6,4 @@ namespace Dougal {
     update(record: Model): Q.Promise<any>
     delete(record: Model): Q.Promise<any>
   }
-
-  // FIXME Typescript compilation error. Necessary to export anything.
-  export const TEMP = 'FIXME';
 }
