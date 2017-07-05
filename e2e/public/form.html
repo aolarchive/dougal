@@ -5,10 +5,14 @@
 
   <div class="row">
     <div class="form-group col-md-10"
-         ng-class="{'has-error': !!$ctrl.employee.errors.name.length}">
+         ng-class="{'has-error': $ctrl.hasError('name')}">
       <label>Name</label>
       <input class="form-control" type="text" ng-model="$ctrl.employee.name" />
-      <p class="help-block" ng-repeat="message in $ctrl.employee.errors.name">{{message}}</p>
+      <p class="help-block"
+         ng-show="$ctrl.hasError('name')"
+         ng-repeat="message in $ctrl.employee.errors.name">
+        {{message}}
+      </p>
     </div>
     <div class="form-group col-md-2"
          ng-class="{'has-error': !!$ctrl.employee.errors.gender.length}">
@@ -35,7 +39,7 @@
   <div class="form-buttons">
     <button class="btn btn-primary"
       type="submit"
-      ng-disabled="!$ctrl.employee.isValid()"
+      ng-disabled="!$ctrl.canSubmit()"
       ng-bind="$ctrl.employee.isNew() ? 'Create' : 'Save'">
     </button>
   </div>

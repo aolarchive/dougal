@@ -114,7 +114,9 @@ namespace Dougal {
       return this.store.read(this)
         .then((data) => {
           if (data) {
-            return this.parse(data);
+            this.parse(data);
+            this.changed = {};
+            return this;
           }
           return q.reject('Record Not Found');
         });
@@ -126,6 +128,14 @@ namespace Dougal {
 
     has(key: string): boolean {
       return _.has(this.attributes, key);
+    }
+
+    hasChanged(key?: string) {
+      if (key) {
+        return !_.isUndefined(this.changed[key]);
+      } else {
+        return !_.isEmpty(this.changed);
+      }
     }
 
     get id() {

@@ -180,7 +180,9 @@ var Dougal;
             return this.store.read(this)
                 .then(function (data) {
                 if (data) {
-                    return _this.parse(data);
+                    _this.parse(data);
+                    _this.changed = {};
+                    return _this;
                 }
                 return Dougal.q.reject('Record Not Found');
             });
@@ -190,6 +192,14 @@ var Dougal;
         };
         Model.prototype.has = function (key) {
             return _.has(this.attributes, key);
+        };
+        Model.prototype.hasChanged = function (key) {
+            if (key) {
+                return !_.isUndefined(this.changed[key]);
+            }
+            else {
+                return !_.isEmpty(this.changed);
+            }
         };
         Object.defineProperty(Model.prototype, "id", {
             get: function () {

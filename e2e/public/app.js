@@ -66,12 +66,19 @@
   }
 
   function EmployeeController($routeParams, Employee) {
+    this.employee = new Employee();
     if ($routeParams.id) {
-      Employee.find($routeParams.id)
-        .then(employee => this.employee = employee);
-    } else {
-      this.employee = new Employee();
+      this.employee.id = $routeParams.id;
+      this.employee.fetch();
     }
+
+    this.canSubmit = () => {
+      return this.employee.isValid() && this.employee.hasChanged();
+    };
+
+    this.hasError = (field) => {
+      return this.employee.hasChanged(field) && _.some(this.employee.errors[field]);
+    };
 
     this.save = () => {
       this.employee.save();

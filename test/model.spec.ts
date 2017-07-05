@@ -142,7 +142,8 @@ namespace Dougal.Tests {
       describe('fetch', () => {
         it('should fetch the data for a record', (done) => {
           let id = _.head(LocalStore.items).id;
-          let employee = new Employee({id: id});
+          let employee = new Employee();
+          employee.id = id;
           employee.fetch()
             .then(() => {
               expect(employee.isNew()).toBe(false);
@@ -151,9 +152,31 @@ namespace Dougal.Tests {
                 name: 'John',
                 birthdate: undefined
               });
+              expect(employee.hasChanged()).toBe(false);
             })
             .catch((error) => done.fail(error))
             .finally(done);
+        });
+      });
+
+      describe('hasChanged', () => {
+        it('should tell if the model has any change', () => {
+          let employee = new Employee();
+          expect(employee.hasChanged()).toBe(false);
+          employee.name = 'Bob';
+          expect(employee.hasChanged()).toBe(true);
+        });
+
+        it('should tell if a specific field has any change', () => {
+          let employee = new Employee();
+          expect(employee.hasChanged('name')).toBe(false);
+          employee.id = 123;
+          expect(employee.hasChanged('name')).toBe(false);
+
+          employee.name = 'Bob';
+          expect(employee.hasChanged('name')).toBe(true);
+          employee.name = '';
+          expect(employee.hasChanged('name')).toBe(true);
         });
       });
 
