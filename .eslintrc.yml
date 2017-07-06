@@ -14,3 +14,4 @@ rules:
   'require-jsdoc': ['off']
   'space-before-function-paren': ['off']
   'spaced-comment': ['off'] # in conflict with TypeScript references
+  'valid-jsdoc': ['off']
