@@ -41,11 +41,13 @@
     "karma-typescript": "^3.0.4",
     "lodash": "^4.17.4",
     "log4js": "^1.1.1",
+    "typedoc": "^0.7.1",
     "typescript": "~2.4.0",
     "typescript-eslint-parser": "^3.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run"
+    "test": "./node_modules/.bin/karma start --single-run",
+    "api-doc": "./node_modules/.bin/typedoc lib --mode file --out apidoc --ignoreCompilerErrors --name Dougal --entryPoint Dougal"
   },
   "author": "Emmanuel Bourgerie <manu@bourgerie.fr>",
   "license": "Apache-2.0"

@@ -51,7 +51,7 @@ class EmployeesController {
   }
 
   delete(id) {
-    _.remove(this.employees, ['id', req.params.id]);
+    _.remove(this.employees, ['id', id]);
     return true;
   }
 

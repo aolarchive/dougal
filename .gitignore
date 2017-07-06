@@ -84,3 +84,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 .vscode/settings.json
+
+# API docs (not ready for GA)
+apidoc

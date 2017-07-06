@@ -1,4 +1,16 @@
 namespace Dougal {
+  /**
+   * Additional annotation for TypeScript inheritance.
+   *
+   * ```
+   *  @ExtendedModel
+   * class Employee extends Model {
+   * }
+   *
+   * Employee.all(); // Available thanks to @ExtendedModel
+   * ```
+   * @param NewModel
+   */
   export function ExtendedModel(NewModel) {
     NewModel.all = function (): Q.Promise<Model[]> {
       return Model._all(NewModel);
