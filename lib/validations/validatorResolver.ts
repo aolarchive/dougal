@@ -59,12 +59,7 @@ namespace Dougal.Validations {
     }
 
     run(record) {
-      if (this.attribute) {
-        return this.validator.validate(record, this.attribute, record.get(this.attribute));
-      } else {
-        // TODO
-        return false;
-      }
+      return this.validator.validate(record, this.attribute, record.get(this.attribute));
     }
   }
 }

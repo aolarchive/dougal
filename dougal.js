@@ -437,12 +437,7 @@ var Dougal;
                 this.validator = new Anon(options);
             };
             ValidatorResolver.prototype.run = function (record) {
-                if (this.attribute) {
-                    return this.validator.validate(record, this.attribute, record.get(this.attribute));
-                }
-                else {
-                    return false;
-                }
+                return this.validator.validate(record, this.attribute, record.get(this.attribute));
             };
             return ValidatorResolver;
         }());
